@@ -1,0 +1,84 @@
+.main {
+	//border: 1px solid black;
+	width: 480px;
+	font-size: 25px;
+	padding-left: 20px;
+	color: #666;
+	font-family: 'Fauna One', serif;
+}
+
+a {
+	font-size: 12px;
+}
+.controldiv td {
+	padding-bottom: 15px;	
+}
+
+.editdiv {
+	font-size: 12px;
+}
+
+.errors {
+	font-size: 1.5em;
+	color: red;	
+}
+
+.tr_1 {
+	background-color: #EEEEEE;
+}
+
+.temperature {
+	font-family: 'Paytone One', sans-serif;
+}
+
+#updateinfo {
+	color: red;	
+}
+
+.ackdiv {
+	color: red;	
+}
+
+#runningstatediv {
+		
+}
+
+.programended {
+	color: red;
+}
+
+.tempouterdiv {
+	float: left;
+	width: 220px;
+}
+
+fieldset {
+	border-radius: 10px;
+}
+
+#programname {
+	font-size: 2em;
+}
+
+.activeinstruction {
+	background-color: #CCC;	
+}
+
+.timeleftdiv {
+	font-size: 0.7em; 
+}
+
+.instructiondiv {
+	padding-left: 20px;	
+}
+
+#totaltimeleftdiv {
+	width: 440px;
+	
+}
+
+.fulldiv {
+	padding-top: 20px;
+	padding-bottom: 20px;
+	width: 440px;
+}

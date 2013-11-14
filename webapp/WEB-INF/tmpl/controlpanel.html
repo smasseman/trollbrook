@@ -1,0 +1,54 @@
+#parse("header.html")
+<div class="controldiv">
+	<form action="controlpanel.html" method="POST" id="actionform">
+		<table>
+			<tr>
+				<td>Pump</td>
+				<td>
+					Av: <input type="radio" name="pump" value="OFF" #if( "$pump.name()" == "OFF") checked="checked" #end/><br/>
+					På: <input type="radio" name="pump" value="ON" #if( "$pump.name()" == "ON") checked="checked" #end/><br/>
+				</td>
+			</tr>
+			<tr>
+				<td>Värme</td>
+				<td>
+					Av: <input type="radio" name="heat" value="OFF" #if( "$heat.name()" == "OFF") checked="checked" #end/><br/>
+					På: <input type="radio" name="heat" value="ON" #if( "$heat.name()" == "ON") checked="checked" #end/><br/>
+				</td>
+			</tr>
+			<tr>
+				<td>Temperatur</td>
+				<td>
+					$temperature
+				</td>
+			</tr>
+			<tr>
+				<td>Morse kod</td>
+				<td>
+					<input name="morse" value="$morse">
+					<input type="submit" value="Skicka">
+				</td>
+			</tr>
+		</table>
+	</form>
+	
+	CPU: $cputemp <br/>
+<a href="index.html">Hem</a>
+</div>
+
+<script>
+	$(document).ready( function() {
+		$("input").each( function() {
+			$(this).change( function() {
+				$("#actionform").submit();	
+			});
+		});
+		$(":button").each( function() {
+			$(this).click( function() {
+				$("#actionform").submit();	
+			});
+		});
+		
+	});
+</script>
+#parse("footer.html")

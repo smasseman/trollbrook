@@ -1,0 +1,203 @@
+#parse("header.html")
+<div id="programname">
+	$program.name 
+</div>
+
+<div id="updateinfo">
+</div>
+
+	<div id="runningstatediv">Programmet kör.</div>
+
+	<div class="tempouterdiv">
+		<fieldset>
+			<legend>Värme</legend>
+			<span id="heatstatediv" class="temperature"></span>
+		</fieldset>
+	</div>
+	<div class="tempouterdiv">
+		<fieldset>
+			<legend>Pump</legend>
+			<span id="pumpstatediv" class="temperature"></span>
+		</fieldset>
+	</div>
+	<div style="clear: both;"></div>
+	
+
+	<div class="tempouterdiv">
+		<fieldset>
+			<legend>Temperatur</legend>
+			<span id="tempdiv" class="temperature"></span>
+		</fieldset>
+	</div>
+	<div class="tempouterdiv">
+		<fieldset>
+			<legend>Önskad</legend>
+			<span id="desiredtempdiv" class="temperature"></span>
+		</fieldset>
+	</div>
+	<div style="clear: both;"></div>
+
+	<script>
+		var alarmText = new Array();
+		#foreach( $i in $program.instructions )
+			#set( $num = $velocityCount - 1 )
+			#if( "$i.type.name()" == "ALARM")
+				alarmText[$num] = "$i.message";
+			#else
+				alarmText[$num] = "";
+			#end
+		#end
+	</script>
+	
+	#foreach( $i in $program.instructions )
+		#set( $num = $velocityCount - 1 )
+		#if( "$i.type.name()" == "ALARM")
+			<div class="ackdiv" id="ackdiv_$num" style="display: none;">
+				<fieldset>
+				<legend>Alarm</legend>
+					$i.message
+					<br/>
+					<a href="#" onclick="return sendAck('$num');">OK</a>
+				</fieldset>
+			</div>
+			<audio id="alarm_audio_$num" preload="auto">
+				<source src="audio/${i.alarmName}.wav"></source>
+				<source src="audio/${i.alarmName}.mp3"></source>
+			</audio>
+		 #end
+	#end
+	
+<div id="instructions" class="fulldiv">
+	<fieldset>
+		<legend>Uppskattad tid kvar</legend>
+		<div id="totaltimeleftvaluediv">
+		</div> 
+	</fieldset>
+</div>
+
+<div id="instructions" class="fulldiv">
+	<fieldset>
+		<legend>Instruktioner</legend>
+	
+	#foreach( $i in $program.instructions )
+		#set( $num = $velocityCount - 1 )
+		<div id="instruction_$num" class="instructiondiv">
+			$i.displayString()
+			<span class="timeleftdiv" id="timeleftdiv_$num">
+			</span>
+		</div>
+	#end
+	</fieldset>
+</div>
+
+
+<script>
+	var lastUpdate = new Date();
+	var secleft = -1;
+	var state = {timestamp: 0};
+	function updateSecLeft() {
+		var seconds = Math.round((new Date().getTime() - lastUpdate.getTime()) / 1000);
+		if( seconds > 30 ) {
+			$("#updateinfo").html("Programmets status har inte uppdaterats på " + seconds + " sekunder!");	
+		} else {
+			$("#updateinfo").html("");
+		}
+		$(".timeleftdiv").each(function(){
+	    	$(this).html("");
+	    });
+		if( secleft != null && secleft > 0) {
+			secleft--;
+			var minleft = Math.round(secleft/60);
+			var text;
+			if( minleft > 0 ) {
+				text = minleft + " minuter kvar";	
+			} else {
+				text = secleft + " sekunder kvar";
+			}
+			text = "(" + text + ")";
+			$("#timeleftdiv_" + state.instructionpointer).html(text);
+		}
+	}
+	function updateStatus() {
+		${esc.dollar}.ajax({
+			  async: true,
+			  type: "GET",
+			  dataType: "json",
+			  cache: false,
+			  url: "status.html",
+			  data: {
+				  clientstatetimestamp: state.timestamp
+			  }
+			}).done(function ( data ) {
+				state = data.state;
+				if( !state.running ) {
+					$("#runningstatediv").html("Programmet är avslutat.");
+					$("#runningstatediv").addClass("programended");
+				}
+
+				if( state.pumpstate == "ON" )
+					$("#pumpstatediv").html("På");
+				else
+					$("#pumpstatediv").html("Av");
+				
+				if( state.heatstate == "ON" )
+					$("#heatstatediv").html("På");
+				else
+					$("#heatstatediv").html("Av");
+				
+				if( state.currenttemp == null )
+					$("#tempdiv").html("-");
+				else	
+					$("#tempdiv").html(state.currenttemp);
+				
+				if( state.desiredtemp == null )
+					$("#desiredtempdiv").html("-");
+				else
+					$("#desiredtempdiv").html(state.desiredtemp);
+				
+				if( data.totalminutesleft == null )
+					$("#totaltimeleftvaluediv").html("-");
+				else
+					$("#totaltimeleftvaluediv").html(data.totalminutesleft + " minuter");
+				
+				secleft = data.secondsleft;
+				$(".instructiondiv").each(function(){
+			    	//$(this).css("background-color","white");
+					$(this).removeClass("activeinstruction");
+			    });
+				//$("#instruction_" + state.instructionpointer).css("background-color","gray");
+				$("#instruction_" + state.instructionpointer).addClass("activeinstruction");
+				
+				var audio = document.getElementById("alarm_audio_"+state.instructionpointer);
+				if( audio != null ) {
+					if( audio.played.length == 0 ) {
+						audio.play();
+						alert(alarmText[state.instructionpointer]);
+						sendAck(state.instructionpointer);
+					}
+				}
+				lastUpdate = new Date();
+				setTimeout(function(){updateStatus()},1000);
+			});
+	}
+	setTimeout(function(){updateStatus()},1000);
+	setInterval(function(){updateSecLeft()},1000);
+	function sendAck(id) {
+		${esc.dollar}.ajax({
+			  async: true,
+			  type: "POST",
+			  dataType: "json",
+			  cache: false,
+			  url: "ackalarm.html",
+			  data: {
+				  alarmid: id
+			  }
+			}).done(function ( data ) {
+			});
+		return false;
+	}
+</script>
+
+<a href="index.html">Tillbaka</a> <br/>
+<a href="stop.html" onclick="return confirm('Är du säker av du vill avbryta körningen?');">Stoppa körningen</a>
+#parse("footer.html")

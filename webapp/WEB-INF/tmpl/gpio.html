@@ -1,0 +1,42 @@
+<html>
+	<table>
+		<tr>
+			<td>
+				Name
+			</td>
+			<td>
+				State
+			</td>
+			<td>
+				Toggle
+			</td>
+		</tr>
+		#foreach( $p in $exported )
+			<tr>
+				<td>
+					$p.name
+				</td>		
+				<td>
+					$p.state
+				</td>		
+				<td>
+					<a href="togglegpio.html?pin=$p.name">Toggle</a>
+				</td>		
+			</tr>
+		#end
+	</table>
+	
+	<br/>
+	<table>
+		#foreach($p in $unexported ) 
+			<tr>
+				<td>
+					$p.name
+				</td>
+				<td>
+					<a href="export.html?pin=$p.name">Export</a>
+				</td>
+			</tr>
+		#end
+	</table>
+</html>

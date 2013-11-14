@@ -1,0 +1,47 @@
+#parse("header.html")
+<table>
+	#foreach($p in $programs)
+		#set( $odd = $velocityCount % 2 )
+		<tr class="tr_$odd">
+			<td>
+				$p.name
+			</td>
+			#if( $runningprogram )
+				<td>
+				 	#if( $p.equals($runningprogram)) 
+						Kör just nu <a href="view.html">Övervaka</a>
+					#end
+				</td>
+			#else
+				<td>
+					<form method="POST" action="run.html">
+						<input type="hidden" name="programid" value="$p.id"/>
+						<input type="submit" value="Kör"/>
+					</form>
+				</td>
+				<td>
+					<form method="POST" action="edit.html">
+						<input type="hidden" name="id" value="$p.id"/>
+						<input type="submit" value="Edit"/>
+					</form>
+				</td>
+				<td>
+					<form method="POST" action="delete.html">
+						<input type="hidden" name="id" value="$p.id"/>
+						<input type="submit" value="Delete"/>
+					</form>
+				</td>
+			#end
+			</td>
+		</tr>
+	#end
+</table>
+
+<br/>
+<form action="saveprogram.html">
+	<input name="name" value="">
+	<input type="submit" value="Nytt program"/>
+</form>
+<a href="controlpanel.html">Kontrollpanelen</a><br/>
+<a href="historylist.html">Historik</a>
+#parse("footer.html")

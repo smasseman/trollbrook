@@ -1,0 +1,17 @@
+<configuration>
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss} %5level [%20.20logger{20}] %msg %ex %n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<root level="WARN">
+		<appender-ref ref="STDOUT" />
+	</root>
+
+	<logger name="se.bryggmester" level="debug" />
+	<logger name="se.bryggmester.PumpController" level="trace" />
+
+</configuration>

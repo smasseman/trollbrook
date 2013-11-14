@@ -1,0 +1,104 @@
+#parse("header.html")
+<div class="editdiv">
+<fieldset>
+	<legend>Namn</legend>
+	<form action="saveprogram.html">
+		<input name="name" value="$prog.name"/>
+		<input type="hidden" name="id" value="$prog.id"/>
+		<input type="submit" value="Spara"/>
+	</form>
+</fieldset>
+Uppskattat programtid: $timeleft minuter
+<fieldset>
+	<legend>Instruktioner</legend>
+		<table>
+			
+			#foreach($i in $prog.instructions)
+				#set( $odd = $velocityCount % 2 )
+				#set( $index = $velocityCount - 1 )
+				<tr class="tr_$odd">
+					<td>
+						$i.displayString()
+					</td>
+					<td>
+						#if( $velocityCount > 1 )
+							<form action="saveprogram.html">
+								<input type="hidden" name="id" value="$prog.id"/>
+								<input type="hidden" name="upInstruction" value="$index"/> 
+								<input type="submit" value="Upp"/>
+							</form>
+						#end
+					</td>
+					<td>
+						#if( $velocityCount < $prog.instructions.size() )
+							<form action="saveprogram.html">
+								<input type="hidden" name="id" value="$prog.id"/>
+								<input type="hidden" name="downInstruction" value="$index"/> 
+								<input type="submit" value="Ner"/>
+							</form>
+						#end
+					</td>
+					<td>
+						<form action="saveprogram.html">
+							<input type="hidden" name="id" value="$prog.id"/>
+							<input type="hidden" name="deleteInstruction" value="$index"/> 
+							<input type="submit" value="Ta bort"/>
+						</form>
+					</td>
+				</tr>
+			#end
+		</table>
+</fieldset>
+
+<fieldset>
+	<legend>Lägg till värme instruktion.</legend>
+	<form action="addheat.html">
+		Temperatur:&nbsp;<input name="value" value=""><br/>
+		<input type="hidden" name="id" value="$prog.id"/>
+		<input type="submit" value="Lägg till"/>
+	</form>
+</fieldset>
+
+<fieldset>
+	<legend>Lägg till vänta instruktion.</legend>
+	<form action="addwait.html">
+		Minuter:&nbsp;<input name="value" value=""><br/>
+		<input type="hidden" name="id" value="$prog.id"/>
+		<input type="submit" value="Lägg till"/>
+	</form>
+</fieldset>
+
+<fieldset>
+	<legend>Lägg till alarm instruktion.</legend>
+	<form action="addalarm.html">
+		Text: <input name="message"><br/>
+		Ljud: <select name="alarmName">
+			#foreach($a in $alarms)
+				<option>$a</option>
+			#end
+		</select><br/>
+		<input type="hidden" name="id" value="$prog.id"/>
+		<input type="submit" value="Lägg till"/>
+	</form>
+</fieldset>
+
+<fieldset>
+	<legend>Lägg till pump instruktion.</legend>
+	<form action="addpump.html">
+		<select name="value">
+			<option value="OFF">Av</option>
+			<option value="ON">På, hela tiden.</option>
+			<option value="ON|5m|30s">På (5min/30sek)</option>)
+			<option value="ON|10m|30s">På (10min/30sek)</option>)
+			<option value="ON|10s|5s">På För testning (10s/5s)</option>)
+		</select>
+		<input type="hidden" name="id" value="$prog.id"/>
+		<input type="submit" value="Lägg till"/>
+	</form>
+</fieldset>
+
+<br/>
+<a href="index.html">Hem</a>
+</div>
+
+#parse("footer.html")

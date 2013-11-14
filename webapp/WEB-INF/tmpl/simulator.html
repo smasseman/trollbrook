@@ -1,0 +1,12 @@
+<html>
+<body>
+	<table>
+		#foreach($entry in $currentState.entrySet())
+		<tr>
+			<td>$entry.key</td>
+			<td>$entry.value</td>
+		</tr>
+		#end
+	</table>
+</body>
+</html>

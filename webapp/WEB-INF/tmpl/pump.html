@@ -1,0 +1,16 @@
+<html>
+	<body>
+		#set( $lm = true ) 
+		#if( $lm )
+			#if( "ON" == "$state.name()")
+				<a href="pump.html?cmd=off">Deactivate love mode</a> 
+			#else
+				<a href="pump.html?cmd=on">Activate love mode</a> 
+			#end
+		#else
+			Current state is $state <br/>
+			<a href="pump.html?cmd=off">Av</a><br/>
+			<a href="pump.html?cmd=on">På</a><br/>
+		#end
+	</body>
+</html>
