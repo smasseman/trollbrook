@@ -17,6 +17,6 @@
 		<appender-ref ref="FILE" />
 	</root>
 
-	<logger name="se.bryggmester" level="debug"/>
+	<logger name="se.trollbrook" level="debug"/>
 
 </configuration>
