@@ -1,12 +1,20 @@
 package se.trollbrook.bryggmester;
 
+import se.trollbrook.util.Time;
+
 /**
  * @author jorgen.smas@entercash.com
  */
 public class Hop {
 
 	private String text;
-	private long time;
+	private Time time;
+
+	public Hop(Time time, String text) {
+		super();
+		this.text = text;
+		this.time = time;
+	}
 
 	public String getText() {
 		return text;
@@ -16,11 +24,11 @@ public class Hop {
 		this.text = text;
 	}
 
-	public long getTime() {
+	public Time getTime() {
 		return time;
 	}
 
-	public void setTime(long time) {
+	public void setTime(Time time) {
 		this.time = time;
 	}
 

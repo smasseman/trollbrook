@@ -1,47 +1,40 @@
 #parse("header.html")
-<table>
-	#foreach($p in $programs)
+<table id="recipelisttable">
+	#foreach($recipe in $recipes)
 		#set( $odd = $velocityCount % 2 )
 		<tr class="tr_$odd">
 			<td>
-				$p.name
+				$recipe.name
 			</td>
-			#if( $runningprogram )
-				<td>
-				 	#if( $p.equals($runningprogram)) 
-						Kör just nu <a href="view.html">Övervaka</a>
-					#end
-				</td>
-			#else
-				<td>
-					<form method="POST" action="run.html">
-						<input type="hidden" name="programid" value="$p.id"/>
-						<input type="submit" value="Kör"/>
-					</form>
-				</td>
-				<td>
-					<form method="POST" action="edit.html">
-						<input type="hidden" name="id" value="$p.id"/>
-						<input type="submit" value="Edit"/>
-					</form>
-				</td>
-				<td>
-					<form method="POST" action="delete.html">
-						<input type="hidden" name="id" value="$p.id"/>
-						<input type="submit" value="Delete"/>
-					</form>
-				</td>
-			#end
+			<td>&nbsp;
+				<form method="GET" action="edit.html">
+					<input type="hidden" name="id" value="$recipe.id"/>
+					<input type="submit" value="Edit"/>
+				</form>
+			</td>
+			<td>&nbsp;
+				<form method="POST" action="delete.html">
+					<input type="hidden" name="id" value="$recipe.id"/>
+					<input type="submit" onclick="javascript: return confirm('Är du helt säker på att du vill ta bort $recipe.name');" value="Delete"/>
+				</form>
+			</td>
+			<td>&nbsp;
+				<form method="POST" action="start.html">
+					<input type="hidden" name="id" value="$recipe.id"/>
+					<input type="submit" value="Start"/>
+				</form>
 			</td>
 		</tr>
 	#end
 </table>
 
 <br/>
-<form action="saveprogram.html">
-	<input name="name" value="">
+<!-- 
+<form action="newrecipe.html">
 	<input type="submit" value="Nytt program"/>
 </form>
-<a href="controlpanel.html">Kontrollpanelen</a><br/>
-<a href="historylist.html">Historik</a>
+ -->
+<a href="view.html">Visa körning</a><br/><br/>
+<a href="newrecipe.html">Nytt recept</a><br/><br/>
+<a href="controlpanel.html">Kontrollpanelen</a><br/><br/>
 #parse("footer.html")

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 /**
  * @author jorgen.smas@entercash.com
  */
-@Service
+@Service("pump")
 public class PumpRelay implements Pump {
 
 	@Resource(name = "pumprelay")

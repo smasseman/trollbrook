@@ -24,7 +24,7 @@ public class TemperatureSensorImpl extends AbstractTemperatureSensor {
 	@Resource(name = "temperatureFile")
 	private File file;
 	private Thread thread;
-	private long updateInterval = 10;
+	private long updateInterval = 3;
 
 	@PostConstruct
 	public void start() {
@@ -43,7 +43,9 @@ public class TemperatureSensorImpl extends AbstractTemperatureSensor {
 					}
 				} catch (InterruptedException e) {
 				} catch (Throwable t) {
-					logger.warn("Temp updater terminated.", t);
+					logger.warn("Failure in temp updater.", t);
+				} finally {
+					logger.info("Temp upater is dead.");
 				}
 			}
 		};

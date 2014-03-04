@@ -7,6 +7,9 @@ import java.math.BigDecimal;
  */
 public class Temperature {
 
+	public static final Temperature OFF = new Temperature(new BigDecimal(0));
+	public static final Temperature MAX = new Temperature(new BigDecimal(100));
+
 	private BigDecimal value;
 
 	public Temperature(BigDecimal value) {
@@ -27,7 +30,7 @@ public class Temperature {
 
 	@Override
 	public String toString() {
-		return String.valueOf(value);
+		return value + "\u00B0" + "C";
 	}
 
 	@Override

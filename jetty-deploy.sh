@@ -6,7 +6,7 @@
 
 APP_DIR=`pwd`/webapp
 JETTY_HOME=/usr/local/jetty
-
+cp ./resources/logback.xml ${APP_DIR}/WEB-INF/classes
 cat > "$JETTY_HOME/contexts/bryggmester.xml" << EOF
 <?xml version="1.0"?>
 <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure.dtd">

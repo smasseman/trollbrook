@@ -9,4 +9,6 @@ public interface TemperatureSensor {
 
 	public abstract Temperature getCurrentTemperature();
 
+	public abstract void removeListener(TemperatureListener l);
+
 }

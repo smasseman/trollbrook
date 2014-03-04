@@ -1,0 +1,23 @@
+<div title="Lägg till rast">
+	<form action="saverast.html">
+		<table>
+			<tr>
+				<td>Temperatur:</td>
+				<td><input autofocus="autofocus" name="temp" value="" style="width: 100px"/></td>
+			</tr>
+			<tr>
+				<td>Minuter:</td>
+				<td><input name="time" value="" style="width: 100px"/></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>
+					<input name="id" value="$r.id" type="hidden"/>
+					#if( $request.getParameter("index") )
+						<input name="index" value="$request.getParameter("index")" type="hidden"/>
+					#end
+					<input type="submit" value="Lägg till">
+				</td>
+		</table>
+	</form>
+</div>

@@ -46,19 +46,19 @@ public class RelayTest {
 		r.addListener(listener);
 
 		r.setState(RelayState.ON);
-		Mockito.verify(listener, Mockito.times(1)).relayStateChanged(
+		Mockito.verify(listener, Mockito.times(1)).eventNotification(
 				RelayState.ON);
 
 		r.setState(RelayState.ON);
-		Mockito.verify(listener, Mockito.times(1)).relayStateChanged(
+		Mockito.verify(listener, Mockito.times(1)).eventNotification(
 				RelayState.ON);
 
 		r.setState(RelayState.OFF);
-		Mockito.verify(listener, Mockito.times(1)).relayStateChanged(
+		Mockito.verify(listener, Mockito.times(1)).eventNotification(
 				RelayState.OFF);
 
 		r.setState(RelayState.ON);
-		Mockito.verify(listener, Mockito.times(2)).relayStateChanged(
+		Mockito.verify(listener, Mockito.times(2)).eventNotification(
 				RelayState.ON);
 	}
 

@@ -2,5 +2,6 @@ webapp/WEB-INF/classes/*
 fil.fil
 src/*.java
 *~
+deploy/*
 
 

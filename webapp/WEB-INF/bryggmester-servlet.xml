@@ -27,19 +27,30 @@
 	default-lazy-init="false">
 
 	<context:annotation-config />
-	<context:component-scan base-package="se.bryggmester" />
+	<context:component-scan base-package="se.trollbrook.bryggmester" />
 
-	<bean id="morsepin" class="se.bryggmester.PinFactory">
-		<property name="pin" value="GPIO_04" />
-	</bean>
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**/*.html" />
+			<bean
+				class="se.trollbrook.spring.web.servlet.interceptors.LogModelAndViewInterceptor" />
+		</mvc:interceptor>
+		<mvc:interceptor>
+			<mvc:mapping path="/**/*.html" />
+			<bean
+				class="se.trollbrook.spring.web.servlet.interceptors.MessagesInterceptor" />
+		</mvc:interceptor>
+		<mvc:interceptor>
+			<mvc:mapping path="/**/*.html" />
+			<bean
+				class="se.trollbrook.spring.web.servlet.interceptors.ModelObjectInserterInterceptor">
+				<property name="attributeName" value="ctxRoot" />
+				<property name="attributeValue" ref="ctxRoot" />
 
-	<bean id="pumppin" class="se.bryggmester.PinFactory">
-		<property name="pin" value="GPIO_01" />
-	</bean>
+			</bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
 
-	<bean id="heatpin" class="se.bryggmester.PinFactory">
-		<property name="pin" value="GPIO_00" />
-	</bean>
 
 	<bean id="velocityEngine"
 		class="org.springframework.ui.velocity.VelocityEngineFactoryBean"
@@ -56,32 +67,47 @@
 		p:redirectContextRelative="false" p:contentType="text/html; charset=UTF-8" />
 
 	<beans profile="dev">
+		<bean id="ctxRoot" class="java.lang.String">
+			<constructor-arg value="/bryggmester" />
+		</bean>
+		<bean id="extrarelay" class="se.trollbrook.bryggmester.Relay">
+			<constructor-arg value="Extra" />
+		</bean>
+		<bean id="heatrelay" class="se.trollbrook.bryggmester.Relay">
+			<constructor-arg value="Heat" />
+		</bean>
+		<bean id="pumprelay" class="se.trollbrook.bryggmester.Relay">
+			<constructor-arg value="Pump" />
+		</bean>
 		<bean id="temperatureFile" class="java.lang.String">
 			<constructor-arg value="/tmp/temp.txt" />
 		</bean>
-		<bean id="simulatePins" class="java.lang.Boolean">
-			<constructor-arg value="true" />
-		</bean>
-		<bean id="logdirectory" class="java.io.File">
-			<constructor-arg value="/Users/jorgen/git/bryggmester/logdir" />
-		</bean>
-		<bean id="programdirectory" class="java.io.File">
-			<constructor-arg value="/Users/jorgen/git/bryggmester/programs" />
+		<bean id="databasedirectory" class="java.io.File">
+			<constructor-arg value="/Users/jorgen/git/smasseman/trollbrook/recipes" />
 		</bean>
 	</beans>
 
 	<beans profile="pi">
+		<bean id="ctxRoot" class="java.lang.String">
+			<constructor-arg value="" />
+		</bean>
+		<bean id="extrarelay" class="se.trollbrook.bryggmester.RpiRelay">
+			<constructor-arg value="Extra" />
+			<constructor-arg value="04" />
+		</bean>
+		<bean id="heatrelay" class="se.trollbrook.bryggmester.RpiRelay">
+			<constructor-arg value="Heat" />
+			<constructor-arg value="00" />
+		</bean>
+		<bean id="pumprelay" class="se.trollbrook.bryggmester.RpiRelay">
+			<constructor-arg value="Pump" />
+			<constructor-arg value="01" />
+		</bean>
 		<bean id="temperatureFile" class="java.lang.String">
 			<constructor-arg value="/sys/bus/w1/devices/28-000004e48339/w1_slave" />
 		</bean>
-		<bean id="simulatePins" class="java.lang.Boolean">
-			<constructor-arg value="false" />
-		</bean>
-		<bean id="logdirectory" class="java.io.File">
-			<constructor-arg value="/var/bryggmester/history" />
-		</bean>
-		<bean id="programdirectory" class="java.io.File">
-			<constructor-arg value="/var/bryggmester/programs" />
+		<bean id="databasedirectory" class="java.io.File">
+			<constructor-arg value="/var/trollbrook/bryggmester/recipes" />
 		</bean>
 	</beans>
 

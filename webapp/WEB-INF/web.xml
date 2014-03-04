@@ -4,8 +4,8 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	metadata-complete="true" version="2.5">
 
-	<display-name>Entercash Casino</display-name>
-	<description>Entercash Casino</description>
+	<display-name>Bryggmester</display-name>
+	<description>Brygmester</description>
 
 	<context-param>
 		<param-name>contextConfigLocation</param-name>

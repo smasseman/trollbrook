@@ -18,5 +18,7 @@
 	</root>
 
 	<logger name="se.trollbrook" level="debug"/>
+	<logger name="se.trollbrook.bryggmester.execution.Executor" level="trace"/>
+	<logger name="se.trollbrook.bryggmester.web.StatusController" level="info"/>
 
 </configuration>

@@ -1,8 +1,54 @@
-.main {
-	//border: 1px solid black;
-	width: 480px;
+.main { #
+	border: 1px solid black;
+	width: 1200px;
 	font-size: 25px;
 	padding-left: 20px;
+	color: #666;
+	font-family: 'Fauna One', serif;
+}
+
+#recipelisttable {
+	border-collapse: collapse;
+}
+
+#recipelisttable td {
+	padding-right: 10px;
+}
+
+input[type=submit] {
+	padding: 5px 15px;
+	background: #ccc;
+	border: 0 none;
+	cursor: pointer;
+	border-radius: 6px;
+	border: 1px solid black;
+}
+
+a {
+	padding: 3px 8px 3px 8px;
+	background: #ccc;
+	border: 0 none;
+	cursor: pointer;
+	border-radius: 6px;
+	text-decoration: none;
+	color: black;
+	border: 1px solid black;
+}
+
+.controlpaneltable td {
+	padding: 0px 15px 0px 0px;
+}
+
+.edittable {
+	border-spacing: 30px;
+}
+
+.editinnertable td {
+	padding: 3px 15px 3px 3px;
+}
+
+table {
+	font-size: 25px;
 	color: #666;
 	font-family: 'Fauna One', serif;
 }
@@ -10,17 +56,54 @@
 a {
 	font-size: 12px;
 }
+
 .controldiv td {
-	padding-bottom: 15px;	
+	padding-bottom: 15px;
+}
+
+.leftview { #
+	border: 1px solid black;
+	float: left;
+	width: 450px;
+}
+
+.rightview { #
+	border: 1px solid black;
+	float: left;
+	padding-left: 20px;
+	width: 550px;
+}
+
+.smalllink {
+	font-size: 12px;
+	font-family: 'Fauna One', serif;
+	color: #666;
+}
+
+.footerlinks {
+	clear: both;
 }
 
 .editdiv {
 	font-size: 12px;
 }
 
+.messages {
+	border: 1px solid black;
+	border-radius: 10px;
+}
+
+.infomessage {
+	color: #FFCC00;
+}
+
+.errormessage {
+	color: #CC0000;
+}
+
 .errors {
 	font-size: 1.5em;
-	color: red;	
+	color: red;
 }
 
 .tr_1 {
@@ -32,24 +115,44 @@ a {
 }
 
 #updateinfo {
-	color: red;	
+	color: red;
 }
 
 .ackdiv {
-	color: red;	
-}
-
-#runningstatediv {
-		
+	color: red;
 }
 
 .programended {
 	color: red;
 }
 
-.tempouterdiv {
-	float: left;
+#runningstatediv {
+	
+}
+
+.heatinfo {
+	
+}
+
+.pumpinfo {
+	
+}
+
+.tempinfo {
+	
+}
+
+.wantedinfo {
+	
+}
+
+.smallinfo {
 	width: 220px;
+	float: left;
+}
+
+.wideinfo {
+	width: 440px;
 }
 
 fieldset {
@@ -61,24 +164,14 @@ fieldset {
 }
 
 .activeinstruction {
-	background-color: #CCC;	
+	background-color: #CCC;
 }
 
 .timeleftdiv {
-	font-size: 0.7em; 
-}
-
-.instructiondiv {
-	padding-left: 20px;	
+	font-size: 0.5em;
+	white-space: nowrap;
 }
 
 #totaltimeleftdiv {
-	width: 440px;
-	
-}
-
-.fulldiv {
-	padding-top: 20px;
-	padding-bottom: 20px;
 	width: 440px;
 }

@@ -1,12 +1,11 @@
 package se.trollbrook.bryggmester;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import se.trollbrook.util.ObjectUtil;
+import se.trollbrook.util.event.Listener;
+import se.trollbrook.util.event.ListenerManager;
 
 /**
  * @author jorgen.smas@entercash.com
@@ -17,12 +16,11 @@ public class Relay {
 		ON, OFF;
 	}
 
-	public interface RelayListener {
-		void relayStateChanged(RelayState state);
+	public interface RelayListener extends Listener<RelayState> {
 	}
 
-	private List<RelayListener> listeners = new LinkedList<>();
-	private RelayState currentState;
+	private ListenerManager<RelayState> lm = new ListenerManager<>();
+	private RelayState currentState = RelayState.OFF;
 	private String name;
 	protected Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -35,9 +33,7 @@ public class Relay {
 	}
 
 	public void addListener(RelayListener listener) {
-		if (listener == null)
-			throw new IllegalArgumentException("Listener may not be null.");
-		listeners.add(listener);
+		lm.addListener(listener);
 	}
 
 	public void setState(RelayState state) {
@@ -47,17 +43,8 @@ public class Relay {
 			changeState(state);
 			logger.debug(name + " change from {} to {}", currentState, state);
 			currentState = state;
-			notifyListeners(state);
-		}
-	}
-
-	private void notifyListeners(RelayState state) {
-		for (RelayListener l : listeners) {
-			try {
-				l.relayStateChanged(state);
-			} catch (Exception e) {
-				logger.info("Failed to notify " + l, e);
-			}
+			logger.debug("Notify " + lm.getListeners());
+			lm.notifyListeners(state);
 		}
 	}
 
