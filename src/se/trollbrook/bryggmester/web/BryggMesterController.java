@@ -1,5 +1,6 @@
 package se.trollbrook.bryggmester.web;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -145,7 +146,12 @@ public class BryggMesterController {
 	@RequestMapping(value = "/doimport.html", method = RequestMethod.POST)
 	public String doImportRecipe(Model model, @RequestParam("data") MultipartFile part) throws Exception {
 		BeerXmlToRecipe parser = new BeerXmlToRecipe();
-		InputStream stream = part.getInputStream();
+		byte[] bytes = part.getBytes();
+		InputStream stream = new ByteArrayInputStream(bytes);
+		if (bytes.length == 0) {
+			Messages.addInfoMessage("Du måste välja en fil att importera.");
+			return "import";
+		}
 		Recipe r;
 		try {
 			r = parser.parse(stream);
