@@ -21,14 +21,14 @@ public class CoolDown implements Action {
 		env.getTemperatureController().setWantedTemperature(Temperature.OFF);
 		env.getAlarms().fireAlarmWithoutWait("Värmen är avslagen. Påbörja nedkylningen.");
 
-		this.started = false;
+		this.started = true;
 		try {
 			WaitForTemperature.waitForBelow(env.getTemperatureSensor(), new Temperature(30));
 			env.getAlarms().fireAlarmWithoutWait("Temperaturen är nu under 30 grader.");
 
 			WaitForTemperature.waitForBelow(env.getTemperatureSensor(), new Temperature(20));
-			env.getAlarms().fireAlarmWithoutWait(
-					"Temperaturen är nu under 20 grader. Körningen är klar. Allt är avstängt.");
+			env.getAlarms()
+					.fireAlarmAndWait("Temperaturen är nu under 20 grader. Körningen är klar. Allt är avstängt.");
 		} catch (InterruptedException e) {
 			return;
 		} finally {

@@ -1,6 +1,7 @@
 package se.trollbrook.bryggmester.web;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
@@ -16,9 +17,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import se.trollbrook.bryggmester.BeerXmlToRecipe;
 import se.trollbrook.bryggmester.Hop;
 import se.trollbrook.bryggmester.Rast;
 import se.trollbrook.bryggmester.Recipe;
@@ -32,6 +36,7 @@ import se.trollbrook.bryggmester.web.message.Message;
 import se.trollbrook.bryggmester.web.message.MessageType;
 import se.trollbrook.bryggmester.web.message.Messages;
 import se.trollbrook.util.Time;
+import se.trollbrook.util.Weight;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -133,6 +138,26 @@ public class BryggMesterController {
 		return "redirect:edit.html?id=" + id;
 	}
 
+	@RequestMapping("/import.html")
+	public void importRecipe(Model model) {
+	}
+
+	@RequestMapping(value = "/doimport.html", method = RequestMethod.POST)
+	public String doImportRecipe(Model model, @RequestParam("data") MultipartFile part) throws Exception {
+		BeerXmlToRecipe parser = new BeerXmlToRecipe();
+		InputStream stream = part.getInputStream();
+		Recipe r;
+		try {
+			r = parser.parse(stream);
+		} catch (Exception e) {
+			logger.info("Failed to parse file.", e);
+			Messages.addInfoMessage("Det funkade inte med filen som du valde. Ogiltigt format kanske?");
+			return "import";
+		}
+		db.add(r);
+		return gotoEdit(r);
+	}
+
 	@RequestMapping("/newrecipe.html")
 	public String newRecipe(Model model) {
 		Recipe r = new Recipe();
@@ -140,6 +165,10 @@ public class BryggMesterController {
 		r.setBoilDuration(Time.parse("60m"));
 		r.setStartTemperature(new Temperature(50));
 		db.add(r);
+		return gotoEdit(r);
+	}
+
+	private String gotoEdit(Recipe r) {
 		return "redirect:edit.html?id=" + r.getId();
 	}
 
@@ -215,19 +244,30 @@ public class BryggMesterController {
 
 	@RequestMapping("/savehop.html")
 	public String saveHop(Model model, @RequestParam Long id, @RequestParam(required = false) Integer index,
-			@RequestParam String time, @RequestParam String text) {
+			@RequestParam String time, @RequestParam String text, @RequestParam String weight) {
 		Recipe r = getRecipe(id);
 
 		Time t;
 		try {
 			t = Time.parse(time.trim() + "m");
 		} catch (Exception e) {
-			Messages.addInfoMessage("Kunde inte spara pga felaktigt värde.");
+			Messages.addInfoMessage("Kunde inte spara pga felaktigt värde på tiden.");
 			logger.debug("Failed", e);
 			return "redirect:edit.html?id=" + id;
 		}
+
+		BigDecimal weightValue;
+		try {
+			weightValue = new BigDecimal(weight);
+		} catch (Exception e) {
+			Messages.addInfoMessage("Kunde inte spara pga felaktigt värde på vikten.");
+			logger.debug("Failed", e);
+			return "redirect:edit.html?id=" + id;
+		}
+		Weight w = new Weight(weightValue, Weight.Unit.GRAM);
+
 		if (index == null) {
-			Hop hop = new Hop(t, text);
+			Hop hop = new Hop(t, text, w);
 			r.getHops().add(hop);
 		} else {
 			r.getHops().get(index - 1).setTime(t);

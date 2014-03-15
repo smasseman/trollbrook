@@ -28,7 +28,7 @@
 						#foreach( $rast in $r.rasts )
 							<tr>
 								<td>$rast.temperature</td>
-								<td>$rast.duration</td>
+								<td>$rast.duration.toMinutes() m</td>
 								<td><a href="deleterast.html?id=${r.id}&index=${foreach.count}">Ta bort</a></td>
 							</tr>
 						#end
@@ -46,7 +46,7 @@
 					Koktid:
 				</td>
 				<td>
-					$!r.boilDuration  <a class="ajaxdialog" title="Ändra koktiden" href="editboilduration.html?id=$r.id">Ändra</a>
+					$!r.boilDuration.toMinutes() m  <a class="ajaxdialog" title="Ändra koktiden" href="editboilduration.html?id=$r.id">Ändra</a>
 				</td>
 			</tr>
 			
@@ -58,13 +58,14 @@
 					<table class="editinnertable">
 						#foreach( $hop in $r.hops )
 							<tr>
-								<td>$hop.time.toMinutes() m</td>
 								<td>$hop.text</td>
+								<td>$hop.weight</td>
+								<td>$hop.time.toMinutes() m</td>
 								<td><a href="deletehop.html?id=${r.id}&hop=${foreach.count}">Ta bort</a></td>
 							</tr>
 						#end
 						<tr>
-							<td colspan="2"></td>
+							<td colspan="3"></td>
 							<td>
 								<a class="ajaxdialog" title="Lägg till humle" href="addhop.html?id=$r.id">Lägg till</a>
 							</td>

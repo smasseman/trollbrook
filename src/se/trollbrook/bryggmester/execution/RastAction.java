@@ -69,7 +69,7 @@ public class RastAction implements Action {
 
 	@Override
 	public String displayString() {
-		return "Rast " + rast.getTemperature() + " " + rast.getDuration();
+		return "Rast " + rast.getTemperature() + " " + rast.getDuration().toMinutes() + " m";
 	}
 
 	@Override

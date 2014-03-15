@@ -28,7 +28,7 @@ public class DoneAction implements Action {
 
 	@Override
 	public boolean requireUserActionAtEnd() {
-		return false;
+		return true;
 	}
 
 	@Override

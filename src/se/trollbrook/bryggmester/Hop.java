@@ -1,6 +1,7 @@
 package se.trollbrook.bryggmester;
 
 import se.trollbrook.util.Time;
+import se.trollbrook.util.Weight;
 
 /**
  * @author jorgen.smas@entercash.com
@@ -9,11 +10,13 @@ public class Hop {
 
 	private String text;
 	private Time time;
+	private Weight weight;
 
-	public Hop(Time time, String text) {
+	public Hop(Time time, String text, Weight weight) {
 		super();
 		this.text = text;
 		this.time = time;
+		this.setWeight(weight);
 	}
 
 	public String getText() {
@@ -42,6 +45,14 @@ public class Hop {
 		builder.append(time);
 		builder.append("]");
 		return builder.toString();
+	}
+
+	public Weight getWeight() {
+		return weight;
+	}
+
+	public void setWeight(Weight weight) {
+		this.weight = weight;
 	}
 
 }

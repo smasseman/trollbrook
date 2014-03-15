@@ -25,6 +25,7 @@ import se.trollbrook.bryggmester.TemperatureListener;
 import se.trollbrook.bryggmester.TemperatureSensor;
 import se.trollbrook.bryggmester.alarm.ActiveAlarm;
 import se.trollbrook.bryggmester.alarm.Alarms;
+import se.trollbrook.bryggmester.alarm.Alarms.AlarmListener;
 import se.trollbrook.bryggmester.execution.ExecutionState;
 import se.trollbrook.bryggmester.execution.Executor;
 import se.trollbrook.bryggmester.execution.Executor.ExecutionListener;
@@ -76,6 +77,7 @@ public class StatusController {
 		addWantedTempListener();
 		addTempListener();
 		addPumpListener();
+		addAlarmListener();
 		addHeatListener();
 		addExecutorListener();
 		logger.debug("Inited.");
@@ -129,6 +131,18 @@ public class StatusController {
 				}
 			}
 
+		});
+	}
+
+	private void addAlarmListener() {
+		alarms.addListener(new AlarmListener() {
+
+			@Override
+			public void eventNotification(ActiveAlarm event) {
+				synchronized (lock) {
+					updateTimestamp();
+				}
+			}
 		});
 	}
 
@@ -205,7 +219,7 @@ public class StatusController {
 			}
 			long stop = System.currentTimeMillis();
 			logger.debug("Done waiting after " + Time.fromMillis(stop - start));
-			Thread.sleep(1000);// Updates often comes in klasar.
+			Thread.sleep(300);// Updates often comes in klasar.
 			writeStatus(response);
 		}
 	}

@@ -170,17 +170,39 @@
 				for(var i = 0; i < data.alarms.length; i++) {
 				    var alarm = data.alarms[i];
 				    if( oldAlarmIds[alarm.id] == null ) {
-				    	alert(alarm.text);
-				    	oldAlarmIds[alarm.id] = alarm.id;
-						sendAck(alarm.id);				    	
+				    	setTimeout( function() {
+				    	var snd = new Audio();
+				    	snd.src = "audio/1.wav";
+				    	snd.autoplay = true;
+				    	//snd.play();
+				    	}, 1);
+				    	showAlert(alarm);
 				    }
 				}
 				lastUpdate = data.ts;
-				//alert(data.ts + " -- " + lastUpdate);
+				//showAlert(data.ts + " -- " + lastUpdate);
 				setTimeout(function(){updateStatus()},1000);
 			});
 	}
 	setTimeout(function(){updateStatus()},1000);
+	function showAlert(alarm) {
+		$("#dialog").html(alarm.text);
+		$("#dialog").open();
+    	//oldAlarmIds[alarm.id] = alarm.id;
+		//sendAck(alarm.id);				    	
+	}
+	$(document).ready(function(){
+		$( "#dialog" ).dialog({
+			  buttons: [
+			    {
+			      text: "OK",
+			      click: function() {
+			        $( this ).dialog( "close" );
+			      }
+			    }
+			  ]
+			});
+	});
 	function sendAck(id) {
 		${esc.dollar}.ajax({
 			  async: true,
@@ -196,5 +218,7 @@
 		return false;
 	}
 </script>
-
+<div id="dialog">
+	Hejsan
+</div>
 #parse("footer.html")

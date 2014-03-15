@@ -29,6 +29,10 @@
 	<context:annotation-config />
 	<context:component-scan base-package="se.trollbrook.bryggmester" />
 
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.support.StandardServletMultipartResolver">
+	</bean>
+
 	<mvc:interceptors>
 		<mvc:interceptor>
 			<mvc:mapping path="/**/*.html" />
@@ -50,7 +54,6 @@
 			</bean>
 		</mvc:interceptor>
 	</mvc:interceptors>
-
 
 	<bean id="velocityEngine"
 		class="org.springframework.ui.velocity.VelocityEngineFactoryBean"

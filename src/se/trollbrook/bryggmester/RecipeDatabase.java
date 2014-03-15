@@ -5,6 +5,7 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,6 +26,8 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import se.trollbrook.util.Time;
+import se.trollbrook.util.Weight;
+import se.trollbrook.util.Weight.Unit;
 import se.trollbrook.util.xml.XmlHandler;
 
 /**
@@ -84,7 +87,13 @@ public class RecipeDatabase {
 		}
 		s.append(" <boilduration duration='" + r.getBoilDuration() + "'/>\n");
 		for (Hop hop : r.getHops()) {
-			s.append("  <hop fromend='" + hop.getTime() + "'>" + hop.getText() + "</hop>\n");
+			s.append("  <hop");
+			s.append(" weightvalue='" + hop.getWeight().getValue().toString() + "'");
+			s.append(" weightunit='" + hop.getWeight().getUnit().name() + "'");
+			s.append(" fromend='" + hop.getTime());
+			s.append("'>");
+			s.append(hop.getText());
+			s.append("</hop>\n");
 		}
 		s.append("</recipe>\n");
 		try {
@@ -129,6 +138,7 @@ public class RecipeDatabase {
 		for (RecipeItem i : map.values()) {
 			r.add(i.recipe);
 		}
+		Collections.sort(r, Recipe.NAME_COMPARATOR);
 		return r;
 	}
 
@@ -162,7 +172,17 @@ public class RecipeDatabase {
 
 					} else if ("/recipe/hop".equals(path)) {
 						Time fromEnd = Time.parse(attrs.getValue("fromend"));
-						r.getHops().add(new Hop(fromEnd, tagText));
+
+						String s = attrs.getValue("weightvalue");
+						if (s == null)
+							s = "0";
+						BigDecimal wValue = new BigDecimal(s);
+						s = attrs.getValue("weightunit");
+						if (s == null)
+							s = "GRAM";
+						Unit wUnit = Unit.valueOf(s);
+						Weight w = new Weight(wValue, wUnit);
+						r.getHops().add(new Hop(fromEnd, tagText, w));
 					} else {
 						logger.warn("Unknown tag " + path);
 					}

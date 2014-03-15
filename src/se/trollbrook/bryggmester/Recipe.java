@@ -1,5 +1,6 @@
 package se.trollbrook.bryggmester;
 
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,6 +11,13 @@ import se.trollbrook.util.Time;
  */
 public class Recipe {
 
+	public static final Comparator<Recipe> NAME_COMPARATOR = new Comparator<Recipe>() {
+
+		@Override
+		public int compare(Recipe o1, Recipe o2) {
+			return o1.name.compareTo(o2.name);
+		}
+	};
 	private Long id;
 	private String name;
 	private Temperature startTemperature;
@@ -19,8 +27,31 @@ public class Recipe {
 
 	@Override
 	public String toString() {
-		return id + ", " + name + ", " + startTemperature + ", " + rasts + ", "
-				+ boilDuration + ", " + hops;
+		return id + ", " + name + ", " + startTemperature + ", " + rasts + ", " + boilDuration + ", " + hops;
+	}
+
+	public String toExtendedString() {
+		StringBuilder s = new StringBuilder();
+		s.append("Id: ").append(id).append("\n");
+		s.append("Name: ").append(name).append("\n");
+		s.append("Start temp: ").append(startTemperature.toString()).append("\n");
+		for (Rast r : rasts) {
+			s.append("Rast: ");
+			s.append(r.getTemperature());
+			s.append(" ");
+			s.append(r.getDuration().toMinutes());
+			s.append(" min \n");
+		}
+		for (Hop h : hops) {
+			s.append("Hop: ");
+			s.append(h.getText());
+			s.append(" ");
+			s.append(h.getTime().toMinutes());
+			s.append(" min \n");
+		}
+		s.append("Boil duration: ").append(boilDuration.toMinutes()).append(" min");
+
+		return s.toString();
 	}
 
 	public Temperature getStartTemperature() {

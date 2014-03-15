@@ -127,6 +127,6 @@ public class Time implements Comparable<Time> {
 	}
 
 	public int toMinutes() {
-		return (int) (this.millis / 60000);
+		return (int) Math.round(this.millis / 60000.0);
 	}
 }

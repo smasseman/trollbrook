@@ -61,7 +61,7 @@ public class StartBoiling implements Action {
 
 	@Override
 	public String displayString() {
-		return "Starta kokning (Koka i " + recipe.getBoilDuration() + ").";
+		return "Starta kokning (Koka i " + recipe.getBoilDuration().toMinutes() + " m).";
 	}
 
 	@Override
