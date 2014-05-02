@@ -175,3 +175,7 @@ fieldset {
 #totaltimeleftdiv {
 	width: 440px;
 }
+
+.no-close .ui-dialog-titlebar-close {
+  display: none;
+}

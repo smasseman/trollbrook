@@ -28,6 +28,7 @@ public class Alarm {
 
 	private String message;
 	private Type type;
+	private boolean showPumpControl = false;
 
 	public Alarm(String text, Type type) {
 		this.message = text;
@@ -50,6 +51,8 @@ public class Alarm {
 		builder.append(type);
 		builder.append(", message=");
 		builder.append(message);
+		builder.append(", showPumpControl=");
+		builder.append(showPumpControl);
 		builder.append("]");
 		return builder.toString();
 	}
@@ -60,5 +63,13 @@ public class Alarm {
 
 	public void setType(Type type) {
 		this.type = type;
+	}
+
+	public boolean getShowPumpControl() {
+		return showPumpControl;
+	}
+
+	public void setShowPumpControl(boolean showPumpControl) {
+		this.showPumpControl = showPumpControl;
 	}
 }

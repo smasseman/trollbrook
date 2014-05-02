@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
+import java.util.TreeSet;
 
 import javax.annotation.Resource;
 
@@ -71,9 +71,15 @@ public class RecipeDatabase {
 	}
 
 	public void add(Recipe r) {
-		r.setId(new Random().nextLong());
+		r.setId(generateId());
 		File file = createFilename(r);
 		write(r, file);
+	}
+
+	private Long generateId() {
+		TreeSet<Long> currentIds = new TreeSet<>(getRecipeMap().keySet());
+		currentIds.add(0L);
+		return 1 + currentIds.descendingIterator().next();
 	}
 
 	private void write(Recipe r, File file) {
@@ -100,13 +106,15 @@ public class RecipeDatabase {
 			FileWriter w = new FileWriter(file);
 			w.write(s.toString());
 			w.close();
+			logger.debug("Written " + file.getAbsolutePath() + " with recipe id=" + r.getId() + " and name="
+					+ r.getName());
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	private File createFilename(Recipe r) {
-		String name = r.getName() + SUFFIX;
+		String name = r.getName() + "-" + r.getId() + SUFFIX;
 		return new File(dir, name);
 	}
 
@@ -119,6 +127,8 @@ public class RecipeDatabase {
 				if (f.getName().endsWith(SUFFIX)) {
 					Recipe r = parseRecipe(f);
 					result.put(r.getId(), new RecipeItem(f, r));
+					logger.debug("Found recipe with id " + r.getId() + " and name " + r.getName() + " in "
+							+ f.getAbsolutePath());
 				}
 				return false;
 			}

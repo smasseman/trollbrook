@@ -13,7 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import se.trollbrook.bryggmester.Relay;
 import se.trollbrook.bryggmester.Relay.RelayListener;
@@ -193,6 +195,19 @@ public class StatusController {
 		timestamp = System.currentTimeMillis();
 		json.addProperty("ts", timestamp);
 		lock.notifyAll();
+	}
+
+	@RequestMapping("/alarm.html")
+	public void getAlarm(@RequestParam Long id, Model model) {
+		for (ActiveAlarm alarm : alarms.getActiveAlams()) {
+			if (alarm.getId().equals(id)) {
+				model.addAttribute("activealarm", alarm);
+				return;
+			} else {
+				logger.debug("No match for " + id + " and " + alarm);
+			}
+		}
+		logger.debug("Could not find any active alarm with id " + id);
 	}
 
 	@RequestMapping("/status.json")

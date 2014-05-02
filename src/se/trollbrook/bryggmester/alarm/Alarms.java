@@ -32,7 +32,7 @@ public class Alarms {
 		lm.addListener(l);
 	}
 
-	public synchronized ActiveAlarm active(Alarm a) {
+	public synchronized ActiveAlarm fireAlarm(Alarm a) throws InterruptedException {
 		ActiveAlarm ac = new ActiveAlarm();
 		ac.setAlarm(a);
 		ac.setId(alarmId++);
@@ -40,6 +40,18 @@ public class Alarms {
 		logger.debug("Activeated alarm with id {}: {}", ac.getId(), ac.getAlarm().getMessage());
 		lm.notifyListeners(ac);
 		logger.debug("Current alarms: " + this.activeAlarms);
+
+		if (Alarm.Type.WAIT_FOR_USER_INPUT == a.getType()) {
+			logger.debug("Activated alarm and wait for user action: " + a.getMessage());
+			try {
+				this.waitForAck(ac, null);
+			} catch (InterruptedException e) {
+				this.deactive(ac.getId());
+				throw e;
+			}
+		} else {
+			logger.debug("Activated alarm without wait for user action: " + a.getMessage());
+		}
 		return ac;
 	}
 
@@ -80,19 +92,14 @@ public class Alarms {
 	}
 
 	public void fireAlarmWithoutWait(String message) {
-		Logger logger = LoggerFactory.getLogger("Alarms");
-		active(new Alarm(message, Type.NO_INPUT));
-		logger.debug("Activated alarm and do not wait input: " + message);
+		try {
+			fireAlarm(new Alarm(message, Type.NO_INPUT));
+		} catch (InterruptedException e) {
+			throw new RuntimeException("Will not happen.", e);
+		}
 	}
 
 	public void fireAlarmAndWait(String message) throws InterruptedException {
-		ActiveAlarm active = this.active(new Alarm(message, Type.WAIT_FOR_USER_INPUT));
-		logger.debug("Activated alarm and wait for user action: " + message);
-		try {
-			this.waitForAck(active, null);
-		} catch (InterruptedException e) {
-			this.deactive(active.getId());
-			throw e;
-		}
+		fireAlarm(new Alarm(message, Type.WAIT_FOR_USER_INPUT));
 	}
 }

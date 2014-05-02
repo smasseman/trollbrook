@@ -1,4 +1,5 @@
 webapp/WEB-INF/classes/*
+/recipes
 fil.fil
 src/*.java
 *~

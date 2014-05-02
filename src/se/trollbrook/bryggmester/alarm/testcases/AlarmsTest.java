@@ -18,7 +18,7 @@ public class AlarmsTest {
 	public void test() throws InterruptedException {
 		Alarms as = new Alarms();
 		Alarm a = new Alarm("foo", Type.WAIT_FOR_USER_INPUT);
-		ActiveAlarm aa = as.active(a);
+		ActiveAlarm aa = as.fireAlarm(a);
 		ack(aa, as, 2000);
 		long start = System.currentTimeMillis();
 		as.waitForAck(aa, 5000L);

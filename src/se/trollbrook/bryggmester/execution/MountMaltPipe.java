@@ -2,6 +2,7 @@ package se.trollbrook.bryggmester.execution;
 
 import java.util.concurrent.TimeUnit;
 
+import se.trollbrook.bryggmester.alarm.Alarm;
 import se.trollbrook.util.Time;
 
 /**
@@ -18,10 +19,12 @@ public class MountMaltPipe implements Action {
 	@Override
 	public void execute() {
 		try {
-			env.getAlarms().fireAlarmAndWait(
-					"Starttemperaturen är uppnådd. Klicka här innan du börjar montera maltröret.");
-			env.getPumpController().off();
-			env.getAlarms().fireAlarmAndWait("Klicka här när allt är monterat och malten är fylld.");
+			Alarm alarm = new Alarm(
+					"Starttemperaturen är uppnådd. "
+							+ "Montera maltröret. Kontrollera att rörtet sitter perfekt genom att prova pumpen. Fyll på malt. Klicka OK när allt är gjort.",
+					Alarm.Type.WAIT_FOR_USER_INPUT);
+			alarm.setShowPumpControl(true);
+			env.getAlarms().fireAlarm(alarm);
 		} catch (InterruptedException e) {
 			return;
 		}

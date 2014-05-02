@@ -1,0 +1,44 @@
+#set( $alarm = $activealarm.alarm )
+
+$alarm.message
+<br/>
+
+#if( $alarm.showPumpControl ) 
+	<input onclick="startPump()" type="submit" value="Starta pumpen"/>
+	<input onclick="stopPump()" type="submit" value="Stoppa pumpen"/>
+#end
+
+<br/>
+<br/>
+<input onclick="closeAlarm()" type="submit" value="OK"/>
+<script>
+	var snd = new Audio("audio/alarm.wav");
+	snd.play();
+	function closeAlarm() {
+		$( "#dialog" ).dialog( "close" );
+	}
+	$( "#dialog" ).on( "dialogclose", function( event, ui ) {
+		ackAlarm($activealarm.id);
+	} );
+
+	function startPump() {
+		doAction("startpump", {force: "yes"});
+	}
+
+	function stopPump() {
+		doAction("stoppump", {force: "yes"});
+	}
+
+	function doAction(action, data) {
+		${esc.dollar}.ajax({
+			  async: true,
+			  type: "GET",
+			  dataType: "json",
+			  cache: false,
+			  data: data,
+			  url: "controlpanel/" + action + ".json"
+			}).done(function ( data ) {
+			});
+	}
+
+</script>

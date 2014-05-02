@@ -17,6 +17,9 @@ import se.trollbrook.bryggmester.Pump;
 import se.trollbrook.bryggmester.PumpState;
 import se.trollbrook.bryggmester.Temperature;
 import se.trollbrook.bryggmester.TemperatureController;
+import se.trollbrook.bryggmester.alarm.Alarm;
+import se.trollbrook.bryggmester.alarm.Alarm.Type;
+import se.trollbrook.bryggmester.alarm.Alarms;
 import se.trollbrook.bryggmester.execution.Executor;
 
 import com.google.gson.JsonObject;
@@ -33,6 +36,8 @@ public class ControlpanelController {
 	@Resource
 	private Executor executor;
 	@Resource
+	private Alarms alarms;
+	@Resource
 	private TemperatureController tempCtrl;
 
 	@RequestMapping("/controlpanel.html")
@@ -40,28 +45,30 @@ public class ControlpanelController {
 	}
 
 	@RequestMapping("/controlpanel/startpump.json")
-	public void startPump(HttpServletRequest request, HttpServletResponse resp)
-			throws IOException {
-		if (checkExecutorState(resp)) {
+	public void startPump(HttpServletRequest request, HttpServletResponse resp) throws IOException {
+		if (checkExecutorState(request, resp)) {
 			logger.debug("Set pump state ON on " + pump);
 			pump.setState(PumpState.ON);
 			send("Pumpen startas.", resp);
 		}
 	}
 
+	@RequestMapping("testalarm.html")
+	public void testAlarm(Model model) throws IOException {
+		model.addAttribute("alarm", new Alarm("Test", Type.NO_INPUT));
+	}
+
 	@RequestMapping("/controlpanel/stoppump.json")
-	public void stopPump(HttpServletRequest request, HttpServletResponse resp)
-			throws IOException {
-		if (checkExecutorState(resp)) {
+	public void stopPump(HttpServletRequest request, HttpServletResponse resp) throws IOException {
+		if (checkExecutorState(request, resp)) {
 			pump.setState(PumpState.OFF);
 			send("Pumpen stoppad.", resp);
 		}
 	}
 
 	@RequestMapping("/controlpanel/setwanted.json")
-	public void setWanted(HttpServletRequest request, HttpServletResponse resp)
-			throws IOException {
-		if (checkExecutorState(resp)) {
+	public void setWanted(HttpServletRequest request, HttpServletResponse resp) throws IOException {
+		if (checkExecutorState(request, resp)) {
 			try {
 				Integer l = new Integer(request.getParameter("wanted"));
 				Temperature temp = new Temperature(l);
@@ -74,16 +81,16 @@ public class ControlpanelController {
 		}
 	}
 
-	private void send(String message, HttpServletResponse resp)
-			throws IOException {
+	private void send(String message, HttpServletResponse resp) throws IOException {
 		JsonObject json = new JsonObject();
 		json.addProperty("message", message);
 		JsonWriter.writeJson(resp, json.toString());
 		logger.debug("Sent " + json);
 	}
 
-	private boolean checkExecutorState(HttpServletResponse resp)
-			throws IOException {
+	private boolean checkExecutorState(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		if (req.getParameter("force") != null)
+			return true;
 		if (executor.getCurrentState() == ExecutionStatus.EXECUTING) {
 			send("Kan inte göra det när ett program kör.", resp);
 			return false;

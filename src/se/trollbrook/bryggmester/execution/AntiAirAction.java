@@ -37,7 +37,7 @@ public class AntiAirAction implements Action {
 	}
 
 	private void startPump() {
-		Time runDuration = new Time(5L, TimeUnit.SECONDS);
+		Time runDuration = new Time(3L, TimeUnit.SECONDS);
 		Time pausDuration = new Time(2L, TimeUnit.SECONDS);
 		pumpCtrl.start(runDuration, pausDuration);
 	}

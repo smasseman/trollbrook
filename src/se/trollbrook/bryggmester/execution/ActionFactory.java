@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import se.trollbrook.bryggmester.Hop;
 import se.trollbrook.bryggmester.Rast;
 import se.trollbrook.bryggmester.Recipe;
+import se.trollbrook.bryggmester.Temperature;
 import se.trollbrook.util.Time;
 
 /**
@@ -38,8 +39,10 @@ public class ActionFactory {
 	}
 
 	private void addRasts(Recipe recipe, List<Action> result) {
+		Temperature prev = recipe.getStartTemperature();
 		for (Rast r : recipe.getRasts()) {
-			result.add(new RastAction(r, env));
+			result.add(new RastAction(prev, r, env));
+			prev = r.getTemperature();
 		}
 	}
 
@@ -60,7 +63,8 @@ public class ActionFactory {
 			Time timeFromStart = recipe.getBoilDuration().subtract(timeFromEnd);
 			Time timeToWait = timeFromStart.subtract(sum);
 			sum = sum.add(timeToWait);
-			result.add(new AlertAction(hop.getText(), timeToWait, env.getAlarms()));
+			String msg = hop.getText() + " " + hop.getWeight() + " " + hop.getTime().toMinutes() + " m";
+			result.add(new AlertAction(msg, timeToWait, env.getAlarms()));
 		}
 	}
 

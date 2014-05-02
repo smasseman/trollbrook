@@ -1,4 +1,5 @@
 #parse("header.html")
+<div id="testalarmdialog">Apa</div>
 <div class="controldiv">
 	<form action="controlpanel.html" method="POST" id="actionform">
 		<table class="controlpaneltable">
@@ -40,6 +41,7 @@
 		<input type="text" placeholder="Önskad temp" id="wantedinput" value="" style="width: 80px">
 		<input type="submit" onclick="setWanted()" value="Ändra önskad"/><br/>
 	</div>
+	<input type="submit" onclick="testAlarm()" value="Testa alarm">
 
 <br/>	
 <a href="index.html">Hem</a>
@@ -123,5 +125,22 @@ function updateState() {
 		});
 }
 setTimeout(function(){updateState()},1000);
+$( "#testalarmdialog" ).dialog({
+		modal: true,
+		dialogClass: "no-close",
+		autoOpen: false,
+		buttons: [
+		  {
+		    text: "OK",
+		    click: function() {
+		      $( this ).dialog( "close" );
+		    }
+		  }
+		]
+	});
+function testAlarm() {
+	$('#testalarmdialog').load('testalarm.html').dialog('open');
+}
 </script>
+
 #parse("footer.html")

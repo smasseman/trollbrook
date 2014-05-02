@@ -27,8 +27,7 @@ public class CoolDown implements Action {
 			env.getAlarms().fireAlarmWithoutWait("Temperaturen är nu under 30 grader.");
 
 			WaitForTemperature.waitForBelow(env.getTemperatureSensor(), new Temperature(20));
-			env.getAlarms()
-					.fireAlarmAndWait("Temperaturen är nu under 20 grader. Körningen är klar. Allt är avstängt.");
+			env.getAlarms().fireAlarmAndWait("Temperaturen är nu under 20 grader. Körningen är klar.");
 		} catch (InterruptedException e) {
 			return;
 		} finally {
@@ -53,6 +52,8 @@ public class CoolDown implements Action {
 
 	@Override
 	public boolean requireUserActionAtStart() {
+		if (started)
+			return false;
 		return true;
 	}
 

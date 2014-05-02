@@ -23,33 +23,41 @@ public class RastAction implements Action {
 	private Time runDuration = new Time(5, TimeUnit.MINUTES);
 	private Time pausDuration = new Time(30, TimeUnit.SECONDS);
 	private Date doneTime;
+	private boolean running;
+	private Temperature previousTemp;
 
-	public RastAction(Rast r, Environment env) {
+	public RastAction(Temperature previousTemp, Rast r, Environment env) {
 		this.env = env;
 		this.rast = r;
+		this.previousTemp = previousTemp;
 		toString();
 	}
 
 	@Override
 	public void execute() {
 		doneTime = null;
-		env.getPumpController().start(runDuration, pausDuration);
-		env.getTemperatureController().setWantedTemperature(rast.getTemperature());
+		running = true;
 		try {
-			WaitForTemperature.waitFor(env.getTemperatureSensor(), rast.getTemperature());
-		} catch (InterruptedException e) {
-			env.getPumpController().off();
-			env.getTemperatureController().setWantedTemperature(Temperature.OFF);
-			return;
-		}
+			env.getPumpController().start(runDuration, pausDuration);
+			env.getTemperatureController().setWantedTemperature(rast.getTemperature());
+			try {
+				WaitForTemperature.waitFor(env.getTemperatureSensor(), rast.getTemperature());
+			} catch (InterruptedException e) {
+				env.getPumpController().off();
+				env.getTemperatureController().setWantedTemperature(Temperature.OFF);
+				return;
+			}
 
-		this.doneTime = new Date(System.currentTimeMillis() + rast.getDuration().toMillis());
-		try {
-			sleepUntilDoneTime();
-		} catch (InterruptedException e) {
-			return;
+			this.doneTime = new Date(System.currentTimeMillis() + rast.getDuration().toMillis());
+			try {
+				sleepUntilDoneTime();
+			} catch (InterruptedException e) {
+				return;
+			} finally {
+				env.getPumpController().off();
+			}
 		} finally {
-			env.getPumpController().off();
+			running = false;
 		}
 	}
 
@@ -74,8 +82,13 @@ public class RastAction implements Action {
 
 	@Override
 	public Time calculateTimeLeft() {
-		Time t = TimeLeftCalculator.calculateTimeToWarm(env.getTemperatureSensor().getCurrentTemperature(),
-				rast.getTemperature());
+		Time t;
+		if (running) {
+			t = TimeLeftCalculator.calculateTimeToWarm(env.getTemperatureSensor().getCurrentTemperature(),
+					rast.getTemperature());
+		} else {
+			t = TimeLeftCalculator.calculateTimeToWarm(previousTemp, rast.getTemperature());
+		}
 		if (doneTime == null) {
 			t = t.add(rast.getDuration());
 		} else {
