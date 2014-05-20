@@ -46,6 +46,8 @@ public class Recipe {
 			s.append("Hop: ");
 			s.append(h.getText());
 			s.append(" ");
+			s.append(h.getWeight());
+			s.append(" ");
 			s.append(h.getTime().toMinutes());
 			s.append(" min \n");
 		}

@@ -41,27 +41,33 @@ public class PlayWelcome {
 					}
 					logger.info("My IP is " + ip);
 					play(5);
-					relay.setState(RelayState.ON);
+					relay.setState(RelayState.OFF);
 				} catch (InterruptedException e) {
 				} catch (SocketException e) {
 					logger.warn("Failed to get ip address.", e);
 				}
 			}
 
-			private void play(int count) throws InterruptedException {
-				for (int i = 0; i < count; i++) {
-					relay.setState(RelayState.ON);
-					Thread.sleep(100);
-					relay.setState(RelayState.OFF);
-					Thread.sleep(500);
-				}
-			}
 		};
 		this.thread.start();
 	}
 
 	@PreDestroy
-	public void stop() {
-		this.thread.interrupt();
+	public void stop() throws InterruptedException {
+		if (this.thread != null) {
+			this.thread.interrupt();
+			this.thread.join();
+		}
+		play(1);
 	}
+
+	private void play(int count) throws InterruptedException {
+		for (int i = 0; i < count; i++) {
+			relay.setState(RelayState.ON);
+			Thread.sleep(100);
+			relay.setState(RelayState.OFF);
+			Thread.sleep(500);
+		}
+	}
+
 }

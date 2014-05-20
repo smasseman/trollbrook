@@ -52,11 +52,8 @@ public class ActionFactory {
 		Time sum = Time.ZERO;
 		for (Hop hop : recipe.getHops()) {
 			if (!kylslinganAlarmAdded && hop.getTime().toMillis() < millisBeforeEndToAddKylslingan) {
-				Time timeFromEnd = Time.fromMillis(millisBeforeEndToAddKylslingan);
-				Time timeFromStart = recipe.getBoilDuration().subtract(timeFromEnd);
-				Time timeToWait = timeFromStart.subtract(sum);
+				Time timeToWait = addKylslinganAction(recipe, result, millisBeforeEndToAddKylslingan, sum);
 				sum = sum.add(timeToWait);
-				result.add(new AlertAction("Lägg i kylslingan.", timeToWait, env.getAlarms()));
 				kylslinganAlarmAdded = true;
 			}
 			Time timeFromEnd = hop.getTime();
@@ -66,9 +63,28 @@ public class ActionFactory {
 			String msg = hop.getText() + " " + hop.getWeight() + " " + hop.getTime().toMinutes() + " m";
 			result.add(new AlertAction(msg, timeToWait, env.getAlarms()));
 		}
+		if (!kylslinganAlarmAdded) {
+			addKylslinganAction(recipe, result, millisBeforeEndToAddKylslingan, sum);
+		}
+	}
+
+	private Time addKylslinganAction(Recipe recipe, List<Action> result, long millisBeforeEndToAddKylslingan, Time sum) {
+		Time timeFromEnd = Time.fromMillis(millisBeforeEndToAddKylslingan);
+		Time timeFromStart = recipe.getBoilDuration().subtract(timeFromEnd);
+		Time timeToWait = timeFromStart.subtract(sum);
+		result.add(new AlertAction("Lägg i kylslingan.", timeToWait, env.getAlarms()));
+		return timeToWait;
 	}
 
 	private Action createAntiAirAction() {
 		return new AntiAirAction(env);
+	}
+
+	public Environment getEnv() {
+		return env;
+	}
+
+	public void setEnv(Environment env) {
+		this.env = env;
 	}
 }

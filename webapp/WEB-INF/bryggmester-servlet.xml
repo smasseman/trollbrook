@@ -70,6 +70,9 @@
 		p:redirectContextRelative="false" p:contentType="text/html; charset=UTF-8" />
 
 	<beans profile="dev">
+		<bean id="port" class="java.lang.Integer">
+			<constructor-arg value="8080" />
+		</bean>
 		<bean id="ctxRoot" class="java.lang.String">
 			<constructor-arg value="/bryggmester" />
 		</bean>
@@ -91,6 +94,9 @@
 	</beans>
 
 	<beans profile="pi">
+		<bean id="port" class="java.lang.Integer">
+			<constructor-arg value="80" />
+		</bean>
 		<bean id="ctxRoot" class="java.lang.String">
 			<constructor-arg value="" />
 		</bean>

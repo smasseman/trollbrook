@@ -12,6 +12,7 @@ import java.net.URLEncoder;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
@@ -31,6 +32,10 @@ public class RegisterIP implements ServletConfigAware {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	private Thread thread;
 	private String url = "http://trollbrook.se/brewerurl/save.php";
+	@Resource(name = "ctxRoot")
+	private String ctxRoot;
+	@Resource(name = "port")
+	private Integer port;
 
 	@PostConstruct
 	public void start() {
@@ -43,9 +48,10 @@ public class RegisterIP implements ServletConfigAware {
 					while (!interrupted()) {
 						String ip = getIP();
 						registerIP(ip);
+						return;
 					}
 				} catch (InterruptedException e) {
-					logger.debug("Thread interrupted before register done.");
+					logger.info("Thread interrupted before registration was done.");
 					return;
 				} finally {
 					logger.debug("Register thread is down.");
@@ -78,7 +84,7 @@ public class RegisterIP implements ServletConfigAware {
 			}
 
 			private String getUrl(String ip) {
-				return "http://" + ip;
+				return "http://" + ip + ":" + port + ctxRoot + "/index.html";
 			}
 
 			private String getMac(String ip) throws IOException {

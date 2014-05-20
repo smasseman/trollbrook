@@ -66,8 +66,10 @@ public class BeerXmlToRecipe {
 				if (path.equals("/RECIPES/RECIPE/HOPS/HOP/NAME")) {
 					hopName = tagText.trim();
 				}
-				if (path.equals("/RECIPES/RECIPE/HOPS/HOP/AMOUNT")) {
-					BigDecimal value = new BigDecimal(tagText.trim()).multiply(THOUSAND);
+				if (path.equals("/RECIPES/RECIPE/HOPS/HOP/DISPLAY_AMOUNT")) {
+					if (!tagText.endsWith(" g"))
+						throw new RuntimeException("Can not parse weight when unit is not gram. Values was " + tagText);
+					BigDecimal value = new BigDecimal(tagText.substring(0, tagText.length() - 2));
 					value = new BigDecimal(value.intValue());
 					hopWeight = new Weight(value, Unit.GRAM);
 				}
