@@ -1,8 +1,9 @@
 webapp/WEB-INF/classes/*
-/recipes
+recipes
 fil.fil
 src/*.java
 *~
 deploy/*
-
-
+history
+bryggmester.war
+bryggmester_*
