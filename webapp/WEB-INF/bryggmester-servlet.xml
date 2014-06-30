@@ -91,6 +91,9 @@
 		<bean id="databasedirectory" class="java.io.File">
 			<constructor-arg value="/Users/jorgen/git/smasseman/trollbrook/recipes" />
 		</bean>
+		<bean id="historydirectory" class="java.io.File">
+			<constructor-arg value="/Users/jorgen/git/smasseman/trollbrook/history" />
+		</bean>
 	</beans>
 
 	<beans profile="pi">
@@ -117,6 +120,9 @@
 		</bean>
 		<bean id="databasedirectory" class="java.io.File">
 			<constructor-arg value="/var/trollbrook/bryggmester/recipes" />
+		</bean>
+		<bean id="historydirectory" class="java.io.File">
+			<constructor-arg value="/var/trollbrook/bryggmester/history" />
 		</bean>
 	</beans>
 

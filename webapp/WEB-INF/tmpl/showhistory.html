@@ -52,5 +52,21 @@
 </script>
 
 <a href="historylist.html">Tillbaka</a> <br/>
+
+#set( $reload = $request.getParameter("reload")) 
+#if( $reload ) 
+	<a href="showhistory.html?id=${entry.id}">Avsluta automatisk uppdatering</a> <br/>
+<script>
+	
+		setTimeout(function() {
+			location.reload(true);
+		}, ${reload}*1000);
+
+</script>
+
+#else
+	<a href="showhistory.html?id=${entry.id}&reload=10">Starta automatisk uppdatering</a> <br/>
+#end
+
 #parse("footer.html")
 

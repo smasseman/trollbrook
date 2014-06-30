@@ -5,7 +5,7 @@
 	<classpathentry kind="src" path="resources"/>
 	<classpathentry kind="src" path="test/src"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/pi4j-core.jar" sourcepath="pi4j/pi4j-0.0.5/lib/pi4j-core-sources.jar"/>
-	<classpathentry kind="lib" path="webapp/WEB-INF/lib/pi4j-device.jar"/>
+	<classpathentry kind="lib" path="webapp/WEB-INF/lib/pi4j-device.jar" sourcepath="/Users/jorgen/.m2/repository/com/pi4j/pi4j-device/0.0.5/pi4j-device-0.0.5-sources.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/pi4j-gpio-extension.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/pi4j-service.jar"/>
 	<classpathentry kind="lib" path="webapp/WEB-INF/lib/servlet-api-3.0.jar"/>

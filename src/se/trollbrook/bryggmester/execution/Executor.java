@@ -20,6 +20,7 @@ import se.trollbrook.bryggmester.Recipe;
 import se.trollbrook.bryggmester.Temperature;
 import se.trollbrook.bryggmester.TemperatureController;
 import se.trollbrook.bryggmester.alarm.Alarms;
+import se.trollbrook.bryggmester.history.HistoryLogger;
 import se.trollbrook.util.Time;
 import se.trollbrook.util.event.Listener;
 import se.trollbrook.util.event.ListenerManager;
@@ -50,6 +51,8 @@ public class Executor {
 	private int currentActionIndex = 0;
 	private HashMap<Thread, StackTraceElement[]> lockThreads = new HashMap<>();
 	private Recipe recipe;
+	@Resource
+	private HistoryLogger historyLogger;
 
 	public void addListener(ExecutionListener listener) {
 		lm.addListener(listener);
@@ -67,6 +70,7 @@ public class Executor {
 
 	protected void executionLoop() {
 		lock.writeLock().lock();
+		historyLogger.start(this.recipe);
 		try {
 			for (int i = 0; i < actions.size(); i++) {
 				if (currentStatus != ExecutionStatus.EXECUTING) {
@@ -95,6 +99,7 @@ public class Executor {
 			this.pumpController.off();
 			this.alarms.deactiveAll();
 			lm.notifyListeners(createExecutionState());
+			historyLogger.stop();
 			lock.writeLock().unlock();
 		}
 	}
