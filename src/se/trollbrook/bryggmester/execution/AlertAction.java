@@ -3,9 +3,13 @@ package se.trollbrook.bryggmester.execution;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import se.trollbrook.bryggmester.alarm.Alarm;
+import se.trollbrook.bryggmester.alarm.Alarm.Type;
 import se.trollbrook.bryggmester.alarm.Alarms;
+import se.trollbrook.bryggmester.alarm.RepeatAlarmSound;
 import se.trollbrook.util.Time;
 
 /**
@@ -19,6 +23,7 @@ public class AlertAction implements Action {
 	private boolean started;
 	private Date doneTime;
 	private boolean done;
+	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Override
 	public String toString() {
@@ -44,7 +49,11 @@ public class AlertAction implements Action {
 				return;
 			}
 		}
-		alarms.fireAlarmWithoutWait(message);
+		try {
+			alarms.fireAlarm(new Alarm(message, Type.NO_INPUT, new RepeatAlarmSound()));
+		} catch (InterruptedException e) {
+			logger.debug("Interruped.");
+		}
 		done = true;
 	}
 

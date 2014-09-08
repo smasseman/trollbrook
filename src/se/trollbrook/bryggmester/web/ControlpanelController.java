@@ -20,6 +20,7 @@ import se.trollbrook.bryggmester.TemperatureController;
 import se.trollbrook.bryggmester.alarm.Alarm;
 import se.trollbrook.bryggmester.alarm.Alarm.Type;
 import se.trollbrook.bryggmester.alarm.Alarms;
+import se.trollbrook.bryggmester.alarm.OneTimeAlarm;
 import se.trollbrook.bryggmester.execution.Executor;
 
 import com.google.gson.JsonObject;
@@ -55,7 +56,7 @@ public class ControlpanelController {
 
 	@RequestMapping("testalarm.html")
 	public void testAlarm(Model model) throws IOException {
-		model.addAttribute("alarm", new Alarm("Test", Type.NO_INPUT));
+		model.addAttribute("alarm", new Alarm("Test", Type.NO_INPUT, new OneTimeAlarm()));
 	}
 
 	@RequestMapping("/controlpanel/stoppump.json")

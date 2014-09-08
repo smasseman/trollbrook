@@ -6,11 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Resource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import se.trollbrook.bryggmester.alarm.Alarm.Type;
 import se.trollbrook.util.event.Listener;
 import se.trollbrook.util.event.ListenerManager;
 
@@ -24,6 +25,8 @@ public class Alarms {
 	private Map<Long, ActiveAlarm> activeAlarms = new LinkedHashMap<>();
 	private Long alarmId = System.currentTimeMillis();
 	private ListenerManager<ActiveAlarm> lm = new ListenerManager<>();
+	@Resource
+	private SoundPlayer player;
 
 	public interface AlarmListener extends Listener<ActiveAlarm> {
 	}
@@ -32,27 +35,31 @@ public class Alarms {
 		lm.addListener(l);
 	}
 
-	public synchronized ActiveAlarm fireAlarm(Alarm a) throws InterruptedException {
+	public synchronized void fireAlarm(Alarm a) throws InterruptedException {
 		ActiveAlarm ac = new ActiveAlarm();
 		ac.setAlarm(a);
 		ac.setId(alarmId++);
 		activeAlarms.put(ac.getId(), ac);
-		logger.debug("Activeated alarm with id {}: {}", ac.getId(), ac.getAlarm().getMessage());
-		lm.notifyListeners(ac);
-		logger.debug("Current alarms: " + this.activeAlarms);
+		player.play(a.getSound());
+		try {
+			logger.debug("Activeated alarm with id {}: {}", ac.getId(), ac.getAlarm().getMessage());
+			lm.notifyListeners(ac);
+			logger.debug("Current alarms: " + this.activeAlarms);
 
-		if (Alarm.Type.WAIT_FOR_USER_INPUT == a.getType()) {
-			logger.debug("Activated alarm and wait for user action: " + a.getMessage());
-			try {
-				this.waitForAck(ac, null);
-			} catch (InterruptedException e) {
-				this.deactive(ac.getId());
-				throw e;
+			if (Alarm.Type.WAIT_FOR_USER_INPUT == a.getType()) {
+				logger.debug("Activated alarm and wait for user action: " + a.getMessage());
+				try {
+					this.waitForAck(ac, null);
+				} catch (InterruptedException e) {
+					this.deactive(ac.getId());
+					throw e;
+				}
+			} else {
+				logger.debug("Activated alarm without wait for user action: " + a.getMessage());
 			}
-		} else {
-			logger.debug("Activated alarm without wait for user action: " + a.getMessage());
+		} finally {
+			a.getSound().stop();
 		}
-		return ac;
 	}
 
 	public synchronized void deactive(Long id) {
@@ -91,15 +98,11 @@ public class Alarms {
 		return list;
 	}
 
-	public void fireAlarmWithoutWait(String message) {
-		try {
-			fireAlarm(new Alarm(message, Type.NO_INPUT));
-		} catch (InterruptedException e) {
-			throw new RuntimeException("Will not happen.", e);
-		}
+	public SoundPlayer getPlayer() {
+		return player;
 	}
 
-	public void fireAlarmAndWait(String message) throws InterruptedException {
-		fireAlarm(new Alarm(message, Type.WAIT_FOR_USER_INPUT));
+	public void setPlayer(SoundPlayer player) {
+		this.player = player;
 	}
 }

@@ -1,6 +1,8 @@
 package se.trollbrook.bryggmester.execution;
 
+import se.trollbrook.bryggmester.alarm.Alarm;
 import se.trollbrook.bryggmester.alarm.Alarms;
+import se.trollbrook.bryggmester.alarm.OneTimeAlarm;
 import se.trollbrook.util.Time;
 
 /**
@@ -17,7 +19,8 @@ public class AddWaterAction implements Action {
 	@Override
 	public void execute() {
 		try {
-			alarms.fireAlarmAndWait("Fyll på vatten. Klicka här när det är gjort.");
+			alarms.fireAlarm(new Alarm("Fyll på vatten. Klicka här när det är gjort.", Alarm.Type.WAIT_FOR_USER_INPUT,
+					new OneTimeAlarm()));
 		} catch (InterruptedException e) {
 			return;
 		}

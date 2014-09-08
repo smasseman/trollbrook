@@ -2,6 +2,9 @@ package se.trollbrook.bryggmester.execution;
 
 import se.trollbrook.bryggmester.Temperature;
 import se.trollbrook.bryggmester.TimeLeftCalculator;
+import se.trollbrook.bryggmester.alarm.Alarm;
+import se.trollbrook.bryggmester.alarm.Alarm.Type;
+import se.trollbrook.bryggmester.alarm.OneTimeAlarm;
 import se.trollbrook.util.Time;
 
 /**
@@ -19,15 +22,20 @@ public class CoolDown implements Action {
 	@Override
 	public void execute() {
 		env.getTemperatureController().setWantedTemperature(Temperature.OFF);
-		env.getAlarms().fireAlarmWithoutWait("Värmen är avslagen. Påbörja nedkylningen.");
 
 		this.started = true;
 		try {
+			env.getAlarms().fireAlarm(
+					new Alarm("Värmen är avslagen. Påbörja nedkylningen.", Type.NO_INPUT, new OneTimeAlarm()));
+
 			WaitForTemperature.waitForBelow(env.getTemperatureSensor(), new Temperature(30));
-			env.getAlarms().fireAlarmWithoutWait("Temperaturen är nu under 30 grader.");
+			env.getAlarms().fireAlarm(
+					new Alarm("Temperaturen är nu under 30 grader.", Type.NO_INPUT, new OneTimeAlarm()));
 
 			WaitForTemperature.waitForBelow(env.getTemperatureSensor(), new Temperature(20));
-			env.getAlarms().fireAlarmAndWait("Temperaturen är nu under 20 grader. Körningen är klar.");
+			env.getAlarms().fireAlarm(
+					new Alarm("Temperaturen är nu under 20 grader. Körningen är klar.", Type.WAIT_FOR_USER_INPUT,
+							new OneTimeAlarm()));
 		} catch (InterruptedException e) {
 			return;
 		} finally {

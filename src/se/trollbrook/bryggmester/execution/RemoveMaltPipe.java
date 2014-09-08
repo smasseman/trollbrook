@@ -3,6 +3,9 @@ package se.trollbrook.bryggmester.execution;
 import java.util.concurrent.TimeUnit;
 
 import se.trollbrook.bryggmester.Temperature;
+import se.trollbrook.bryggmester.alarm.Alarm;
+import se.trollbrook.bryggmester.alarm.Alarm.Type;
+import se.trollbrook.bryggmester.alarm.OneTimeAlarm;
 import se.trollbrook.util.Time;
 
 /**
@@ -19,10 +22,14 @@ public class RemoveMaltPipe implements Action {
 	@Override
 	public void execute() {
 		try {
-			env.getAlarms().fireAlarmAndWait("Alla raster är klara. Klicka här innan du demonterar maltröret.");
+			env.getAlarms().fireAlarm(
+					new Alarm("Alla raster är klara. Klicka här innan du demonterar maltröret.",
+							Type.WAIT_FOR_USER_INPUT, new OneTimeAlarm()));
 			env.getPumpController().off();
 			env.getTemperatureController().setWantedTemperature(Temperature.OFF);
-			env.getAlarms().fireAlarmAndWait("Klicka här när allt är demonterat och klart för kokning.");
+			env.getAlarms().fireAlarm(
+					new Alarm("Klicka här när allt är demonterat och klart för kokning.", Type.WAIT_FOR_USER_INPUT,
+							new OneTimeAlarm()));
 		} catch (InterruptedException e) {
 			return;
 		}

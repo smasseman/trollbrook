@@ -3,7 +3,10 @@ package se.trollbrook.bryggmester.execution;
 import java.util.concurrent.TimeUnit;
 
 import se.trollbrook.bryggmester.PumpPausController;
+import se.trollbrook.bryggmester.alarm.Alarm;
+import se.trollbrook.bryggmester.alarm.Alarm.Type;
 import se.trollbrook.bryggmester.alarm.Alarms;
+import se.trollbrook.bryggmester.alarm.OneTimeAlarm;
 import se.trollbrook.util.Time;
 
 /**
@@ -28,7 +31,7 @@ public class AntiAirAction implements Action {
 	public void execute() {
 		startPump();
 		try {
-			alarms.fireAlarmAndWait("Klicka när pumpen är luftad.");
+			alarms.fireAlarm(new Alarm("Klicka när pumpen är luftad.", Type.WAIT_FOR_USER_INPUT, new OneTimeAlarm()));
 		} catch (InterruptedException e) {
 			// Do clean up in finally block.
 		} finally {

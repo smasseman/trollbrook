@@ -29,10 +29,12 @@ public class Alarm {
 	private String message;
 	private Type type;
 	private boolean showPumpControl = false;
+	private Sound sound;
 
-	public Alarm(String text, Type type) {
+	public Alarm(String text, Type type, Sound sound) {
 		this.message = text;
 		this.setType(type);
+		this.sound = sound;
 	}
 
 	public String getMessage() {
@@ -71,5 +73,13 @@ public class Alarm {
 
 	public void setShowPumpControl(boolean showPumpControl) {
 		this.showPumpControl = showPumpControl;
+	}
+
+	public Sound getSound() {
+		return sound;
+	}
+
+	public void setSound(Sound sound) {
+		this.sound = sound;
 	}
 }

@@ -79,6 +79,9 @@
 		<bean id="extrarelay" class="se.trollbrook.bryggmester.Relay">
 			<constructor-arg value="Extra" />
 		</bean>
+		<bean id="beeperpin" class="se.trollbrook.bryggmester.Relay">
+			<constructor-arg value="Beep" />
+		</bean>
 		<bean id="heatrelay" class="se.trollbrook.bryggmester.Relay">
 			<constructor-arg value="Heat" />
 		</bean>
@@ -106,6 +109,10 @@
 		<bean id="extrarelay" class="se.trollbrook.bryggmester.RpiRelay">
 			<constructor-arg value="Extra" />
 			<constructor-arg value="04" />
+		</bean>
+		<bean id="beeperpin" class="se.trollbrook.bryggmester.RpiRelay">
+			<constructor-arg value="Beep" />
+			<constructor-arg value="03" />
 		</bean>
 		<bean id="heatrelay" class="se.trollbrook.bryggmester.RpiRelay">
 			<constructor-arg value="Heat" />
