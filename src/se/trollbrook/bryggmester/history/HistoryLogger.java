@@ -73,9 +73,15 @@ public class HistoryLogger {
 
 	private WantedTemperatureListener tempCtrlListener = new WantedTemperatureListener() {
 
+		private Temperature lastWantedState;
+
 		@Override
 		public void eventNotification(Temperature temp) {
+			if (lastWantedState != null) {
+				add(System.currentTimeMillis() - 1, HistoryData.Type.WANTED, temp.getValue().toString());
+			}
 			add(HistoryData.Type.WANTED, temp.getValue().toString());
+			lastWantedState = temp;
 		}
 	};
 
@@ -91,7 +97,6 @@ public class HistoryLogger {
 			add(HistoryData.Type.HEAT, event.name());
 			lastHeatState = event;
 		}
-
 	};
 
 	private RelayListener pumpListener = new Relay.RelayListener() {
