@@ -1,0 +1,22 @@
+#parse("header.vm")
+<table border=1>
+	#foreach($e in $entries)
+		<tr>
+			<td>
+				$date.format('yyyy-MM-dd HH:mm',$e.date)
+			</td>
+			<td>
+				$e.programName
+			</td>
+			<td>
+				<a href="showhistory.html?id=${e.id}">Visa</a>
+			</td>
+			<td>
+				<a href="deletehistory.html?id=${e.id}" onclick="javascript: return confirm('Är du säker på att du vill ta bort?')">Ta bort</a>
+			</td>
+		</tr>
+	#end
+</table>
+
+<a href="index.html">Tillbaka</a> <br/>
+#parse("footer.vm")

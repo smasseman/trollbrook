@@ -1,0 +1,37 @@
+#parse("header.vm")
+<table id="recipelisttable">
+	#foreach($recipe in $recipes)
+		#set( $odd = $velocityCount % 2 )
+		<tr class="tr_$odd">
+			<td>
+				$recipe.name
+			</td>
+			<td>&nbsp;
+				<form method="GET" action="edit.html">
+					<input type="hidden" name="id" value="$recipe.id"/>
+					<input type="submit" value="Edit"/>
+				</form>
+			</td>
+			<td>&nbsp;
+				<form method="POST" action="delete.html">
+					<input type="hidden" name="id" value="$recipe.id"/>
+					<input type="submit" onclick="javascript: return confirm('Är du helt säker på att du vill ta bort $recipe.name');" value="Delete"/>
+				</form>
+			</td>
+			<td>&nbsp;
+				<form method="POST" action="start.html">
+					<input type="hidden" name="id" value="$recipe.id"/>
+					<input type="submit" value="Start"/>
+				</form>
+			</td>
+		</tr>
+	#end
+</table>
+
+<br/>
+<a href="view.html">Visa körning</a><br/><br/>
+<a href="historylist.html">Visa historik</a><br/><br/>
+<a href="newrecipe.html">Nytt recept</a><br/><br/>
+<a href="import.html">Importera recept</a><br/><br/>
+<a href="controlpanel.html">Kontrollpanelen</a><br/><br/>
+#parse("footer.vm")

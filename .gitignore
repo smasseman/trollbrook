@@ -7,3 +7,6 @@ deploy/*
 history
 bryggmester.war
 bryggmester_*
+/build
+/bin
+/.gradle/*

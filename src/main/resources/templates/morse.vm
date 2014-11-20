@@ -1,0 +1,7 @@
+#parse("header.vm")
+<form action="morse.html" method="POST">
+	<input name="text" value="$currentText">
+	<input type="submit" value="... .- ...- ."/>
+</form>
+<a href="index.html">Hem</a>
+#parse("footer.vm")

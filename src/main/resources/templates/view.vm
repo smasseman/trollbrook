@@ -1,0 +1,216 @@
+#parse("header.vm")
+<div>
+	<h1>$!recipe.name</h1>
+	<div class="leftview">
+			<div class="wideinfo runningstate">
+				<fieldset>
+					<legend>Status på körning</legend>
+					<span id="runningstatediv" class="temperature">-</span>
+				</fieldset>
+			</div>
+			<div style="clear: both;"></div>
+			
+			<div class="smallinfo heatinfo">
+				<fieldset>
+					<legend>Värme</legend>
+					<span id="heatstatediv" class="temperature">-</span>
+				</fieldset>
+			</div>
+			<div class="smallinfo pumpinfo">
+				<fieldset>
+					<legend>Pump</legend>
+					<span id="pumpstatediv" class="temperature">-</span>
+				</fieldset>
+			</div>
+			<div style="clear: both;"></div>
+			
+			<div class="smallinfo tempinfo">
+				<fieldset>
+					<legend>Temperatur</legend>
+					<span id="tempdiv" class="temperature">-</span>
+				</fieldset>
+			</div>
+			<div class="smallinfo wantedinfo">
+				<fieldset>
+					<legend>Önskad</legend>
+					<span id="desiredtempdiv" class="temperature">-</span>
+				</fieldset>
+			</div>
+		
+		<div id="instructions" class="wideinfo">
+			<fieldset>
+				<legend>Tid till aktiv handling</legend>
+				<div id="timelefttouseractiondiv" class="temperature">-</div> 
+			</fieldset>
+		</div>
+
+		<div style="clear: both;"></div>
+
+		<div id="instructions" class="wideinfo">
+			<fieldset>
+				<legend>Tid kvar totalt</legend>
+				<div id="totaltimeleftvaluediv" class="temperature">-</div> 
+			</fieldset>
+		</div>
+
+	</div>
+	<div class="rightview">
+		<div id="instructions" class="fulldiv">
+			<fieldset>
+				<legend>Händelser</legend>
+				<table style="white-space: nowrap; border-collapse:collapse;" >
+					<tr id="instruction_$num">
+						<th></th>
+						<th class="timeleftdiv" style="padding-right: 20px;">Börjar om</th>
+						<th class="timeleftdiv">Klar om</th>
+					</tr>			
+					#foreach( $a in $actions )
+						#set( $num = $velocityCount - 1 )
+						<tr id="instruction_$num" class="instructionrow" >
+							<td>						
+								$a.displayString()
+							</td>
+							<td>
+								<span id="instruction_time_left_start_$num" style="padding-left: 20px;" class="timeleftdiv"></span>
+							</td>
+							<td>
+								<span id="instruction_time_left_end_$num" class="timeleftdiv"></span>
+							</td>
+					#end
+				</table>
+			</fieldset>
+		</div>
+	</div>
+	<div class="footerlinks">
+		<a href="showcurrenthistory.html">Visa grafen</a> <br/>
+		<a href="index.html">Startsidan</a> <br/>
+	</div>
+</div>
+
+<script>
+	var lastUpdate = 0;
+	var oldAlarmIds = {};
+	
+	function updateStatus() {
+		${esc.dollar}.ajax({
+			  async: true,
+			  type: "GET",
+			  dataType: "json",
+			  cache: false,
+			  url: "status.json",
+			  data: {
+				  ts: lastUpdate
+			  }
+			}).done(function ( data ) {
+				if( "EXECUTING" == data.currentstate ) {
+					$("#runningstatediv").removeClass("programended");
+					var html = data.currentstate;
+					html += "&nbsp;&nbsp;&nbsp;";
+					html += " <a class='smalllink' href='stop.html'";
+					html += " onclick=\"return confirm('Är du säker av du vill avbryta körningen?');\"";
+					html += ">Stoppa körningen</a>";
+					$("#runningstatediv").html(html);
+				} else {
+					if( data.currentstate ) {
+						$("#runningstatediv").addClass("programended");
+						$("#runningstatediv").html(data.currentstate);
+					 } else {
+						$("#runningstatediv").html("-");
+					}
+				}
+
+				if( data.pump == "ON" )
+					$("#pumpstatediv").html("På");
+				else
+					$("#pumpstatediv").html("Av");
+				
+				if( data.heat == "ON" )
+					$("#heatstatediv").html("På");
+				else
+					$("#heatstatediv").html("Av");
+				
+				if( data.temp == null )
+					$("#tempdiv").html("-");
+				else	
+					$("#tempdiv").html(data.temp);
+				
+				if( data.wantedtemp == null )
+					$("#desiredtempdiv").html("-");
+				else
+					$("#desiredtempdiv").html(data.wantedtemp);
+				
+				if( data.totaltimeleft == null )
+					$("#totaltimeleftvaluediv").html("-");
+				else
+					$("#totaltimeleftvaluediv").html(data.totaltimeleft);
+				
+				if( data.timelefttouseraction == null )
+					$("#timelefttouseractiondiv").html("-");
+				else
+					$("#timelefttouseractiondiv").html(data.timelefttouseraction);
+				
+				$(".instructionrow").each(function(){
+					$(this).removeClass("activeinstruction");
+			    });
+				$("#instruction_" + data.actionindex).addClass("activeinstruction");
+				
+				for(var i = 0; i < data.timeleftstart.length; i++) {
+				    var t = data.timeleftstart[i];
+				    if( t == "0ms")
+					    $("#instruction_time_left_start_" + i).html("");
+				    else
+				    	$("#instruction_time_left_start_" + i).html(t);
+				}
+				for(var i = 0; i < data.timeleftend.length; i++) {
+				    var t = data.timeleftend[i];
+				    if( t == "0ms")
+					    $("#instruction_time_left_end_" + i).html("");
+				    else
+				    	$("#instruction_time_left_end_" + i).html(t);
+				}
+				for(var i = 0; i < data.alarms.length; i++) {
+				    var alarm = data.alarms[i];
+				    if( activeAlarm == null && oldAlarmIds[alarm.id] == null ) {
+				    	showAlarm(alarm);
+				    }
+				}
+				lastUpdate = data.ts;
+				//showAlert(data.ts + " -- " + lastUpdate);
+				setTimeout(function(){updateStatus()},100);
+			});
+	}
+	setTimeout(function(){updateStatus()},1000);
+	var activeAlarm;
+	function showAlarm(alarm) {
+		activeAlarm = alarm;
+    	oldAlarmIds[alarm.id] = alarm;
+    	$('#dialog').load('alarm.html?id='+alarm.id).dialog('open');
+	}
+	$(document).ready(function(){
+		$( "#dialog" ).dialog({
+			  dialogClass: "no-close",
+			  autoOpen: false,
+			  modal: true
+		});
+	}
+	);
+	function ackAlarm(id) {
+		activeAlarm = null;
+		${esc.dollar}.ajax({
+			  async: true,
+			  type: "POST",
+			  dataType: "json",
+			  cache: false,
+			  url: "ackalarm.json",
+			  data: {
+				  id: id
+			  }
+			}).done(function ( data ) {
+			});
+		return false;
+	}
+</script>
+<div id="dialog">
+	
+</div>
+#parse("footer.vm")

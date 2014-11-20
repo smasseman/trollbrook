@@ -1,0 +1,10 @@
+#parse("header.vm")
+<form action="doimport.html" method="post" enctype="multipart/form-data">
+	Välj fil att importera: <input type="file" name="data"><br/>
+	<input type="submit" value="Importera"/>
+</form>
+<a href="index.html">Hem</a>
+<br/>
+<br/>
+<br/>
+#parse("footer.vm")
