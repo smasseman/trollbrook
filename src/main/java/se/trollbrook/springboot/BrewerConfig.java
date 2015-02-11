@@ -1,7 +1,5 @@
 package se.trollbrook.springboot;
 
-import java.io.File;
-
 import se.trollbrook.bryggmester.Relay;
 
 /**
@@ -15,13 +13,5 @@ public interface BrewerConfig {
 
 	public Relay beeperpin() throws Exception;
 
-	public Relay pumprelay() throws Exception;
-
-	public File temperatureFile();
-
-	public File databasedirectory();
-
-	public File historydirectory();
-
-	public String ctxRoot();
+	public Relay pumppin() throws Exception;
 }

@@ -18,6 +18,7 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -37,7 +38,7 @@ import se.trollbrook.util.xml.XmlHandler;
 public class RecipeDatabase {
 
 	private static final String SUFFIX = ".brw.xml";
-	@Resource(name = "databasedirectory")
+	@Value("${databasedirectory}")
 	private File dir;
 	private Logger logger = LoggerFactory.getLogger(getClass());
 

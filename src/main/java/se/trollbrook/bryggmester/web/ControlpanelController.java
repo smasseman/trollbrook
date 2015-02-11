@@ -8,13 +8,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import se.trollbrook.bryggmester.ExecutionStatus;
-import se.trollbrook.bryggmester.Pump;
-import se.trollbrook.bryggmester.PumpState;
+import se.trollbrook.bryggmester.PumpPausController;
 import se.trollbrook.bryggmester.Temperature;
 import se.trollbrook.bryggmester.TemperatureController;
 import se.trollbrook.bryggmester.alarm.Alarm;
@@ -32,24 +32,27 @@ import com.google.gson.JsonObject;
 public class ControlpanelController {
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
-	@Resource(name = "pumpoverheatguard")
-	private Pump pump;
+	@Resource
+	private PumpPausController pumpController;
 	@Resource
 	private Executor executor;
 	@Resource
 	private Alarms alarms;
 	@Resource
 	private TemperatureController tempCtrl;
+	@Value("${simulatetemp}")
+	private boolean simulateTemp;
 
 	@RequestMapping("/controlpanel.html")
 	public void getPanel(Model model) {
+		model.addAttribute("simulatetemp", simulateTemp);
 	}
 
 	@RequestMapping("/controlpanel/startpump.json")
 	public void startPump(HttpServletRequest request, HttpServletResponse resp) throws IOException {
 		if (checkExecutorState(request, resp)) {
-			logger.debug("Set pump state ON on " + pump);
-			pump.setState(PumpState.ON);
+			logger.debug("Set pump state ON on " + pumpController);
+			pumpController.startMax();
 			send("Pumpen startas.", resp);
 		}
 	}
@@ -64,7 +67,7 @@ public class ControlpanelController {
 	@RequestMapping("/controlpanel/stoppump.json")
 	public void stopPump(HttpServletRequest request, HttpServletResponse resp) throws IOException {
 		if (checkExecutorState(request, resp)) {
-			pump.setState(PumpState.OFF);
+			pumpController.off();
 			send("Pumpen stoppad.", resp);
 		}
 	}

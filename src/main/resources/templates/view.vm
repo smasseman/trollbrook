@@ -119,15 +119,9 @@
 					}
 				}
 
-				if( data.pump == "ON" )
-					$("#pumpstatediv").html("På");
-				else
-					$("#pumpstatediv").html("Av");
+				$("#pumpstatediv").html(data.pump);
 				
-				if( data.heat == "ON" )
-					$("#heatstatediv").html("På");
-				else
-					$("#heatstatediv").html("Av");
+				$("#heatstatediv").html(data.heat);
 				
 				if( data.temp == null )
 					$("#tempdiv").html("-");

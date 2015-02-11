@@ -16,6 +16,11 @@ public class ListenerManager<E> {
 	private static Timer timer = new Timer();
 
 	private List<Listener<E>> listeners = new LinkedList<>();
+	private boolean asynchronous = true;
+
+	public void setAsynchronous(boolean a) {
+		asynchronous = a;
+	}
 
 	public synchronized void addListener(Listener<E> listener) {
 		if (listener == null)
@@ -25,7 +30,8 @@ public class ListenerManager<E> {
 
 	public synchronized void notifyListeners(final E event) {
 		final ArrayList<Listener<E>> copy = new ArrayList<>(listeners);
-		timer.schedule(new TimerTask() {
+
+		TimerTask task = new TimerTask() {
 
 			@Override
 			public void run() {
@@ -33,7 +39,11 @@ public class ListenerManager<E> {
 					l.eventNotification(event);
 				}
 			}
-		}, 0);
+		};
+		if (asynchronous)
+			timer.schedule(task, 0);
+		else
+			task.run();
 	}
 
 	public synchronized void removeListener(TemperatureListener listener) {

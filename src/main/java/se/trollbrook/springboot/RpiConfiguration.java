@@ -1,7 +1,5 @@
 package se.trollbrook.springboot;
 
-import java.io.File;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -17,12 +15,6 @@ import se.trollbrook.bryggmester.RpiRelay;
 @Configuration
 @Profile("pi")
 public class RpiConfiguration implements BrewerConfig {
-
-	@Override
-	@Bean
-	public String ctxRoot() {
-		return "";
-	}
 
 	@Override
 	@Bean
@@ -44,26 +36,8 @@ public class RpiConfiguration implements BrewerConfig {
 
 	@Override
 	@Bean
-	public Relay pumprelay() throws Exception {
+	public Relay pumppin() throws Exception {
 		return new RpiRelay("Pump", "01");
-	}
-
-	@Override
-	@Bean
-	public File temperatureFile() {
-		return new File("/sys/bus/w1/devices/28-000004e48339/w1_slave").getAbsoluteFile();
-	}
-
-	@Override
-	@Bean
-	public File databasedirectory() {
-		return new File("/var/trollbrook/bryggmester/recipes").getAbsoluteFile();
-	}
-
-	@Override
-	@Bean
-	public File historydirectory() {
-		return new File("/var/trollbrook/bryggmester/history").getAbsoluteFile();
 	}
 
 	@Bean

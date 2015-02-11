@@ -70,7 +70,6 @@ public class Executor {
 
 	protected void executionLoop() {
 		lock.writeLock().lock();
-		historyLogger.start(this.recipe);
 		try {
 			for (int i = 0; i < actions.size(); i++) {
 				if (currentStatus != ExecutionStatus.EXECUTING) {
@@ -99,7 +98,6 @@ public class Executor {
 			this.pumpController.off();
 			this.alarms.deactiveAll();
 			lm.notifyListeners(createExecutionState());
-			historyLogger.stop();
 			lock.writeLock().unlock();
 		}
 	}

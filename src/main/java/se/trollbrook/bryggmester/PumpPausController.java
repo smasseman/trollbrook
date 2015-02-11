@@ -18,7 +18,7 @@ import se.trollbrook.util.Time;
 @Service
 public class PumpPausController {
 
-	@Resource(name = "pumpoverheatguard")
+	@Resource
 	private Pump pump;
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	private Thread thread;
@@ -38,17 +38,17 @@ public class PumpPausController {
 						while (!die) {
 							try {
 								while (off) {
-									pump.setState(PumpState.OFF);
+									pump.setOff();
 									lock.wait();
 								}
 
-								pump.setState(PumpState.ON);
+								pump.setOn();
 								logger.debug("State is ON. Lets sleep for " + runDuration);
 								lock.wait(runDuration.toMillis());
 
 								if (!pausDuration.equals(Time.ZERO)) {
-									pump.setState(PumpState.OFF);
-									logger.debug("State is OFF. Lets sleep for " + pausDuration);
+									pump.setPaused();
+									logger.info("Paus pump for " + pausDuration);
 									lock.wait(pausDuration.toMillis());
 								}
 

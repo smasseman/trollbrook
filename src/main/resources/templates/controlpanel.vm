@@ -41,7 +41,14 @@
 		<input type="text" placeholder="Önskad temp" id="wantedinput" value="" style="width: 80px">
 		<input type="submit" onclick="setWanted()" value="Ändra önskad"/><br/>
 	</div>
-	<input type="submit" onclick="testAlarm()" value="Testa alarm">
+	<input type="submit" onclick="testAlarm()" value="Testa alarm"><br/>
+		#if( $simulatetemp ) 
+		<input type="text" placeholder="Sätt temperatur" id="settemp" value="" style="width: 80px">
+		<input type="submit" onclick="setTemp()" value="Ändra temp"/><br/>
+
+		<input type="text" placeholder="Mot framtiden" id="addtime" value="" style="width: 80px">
+		<input type="submit" onclick="addTime()" value="Till framtiden"/><br/>
+		#end
 
 <br/>	
 <a href="index.html">Hem</a>
@@ -141,6 +148,36 @@ $( "#testalarmdialog" ).dialog({
 function testAlarm() {
 	$('#testalarmdialog').load('testalarm.html').dialog('open');
 }
+function setTemp() {
+	${esc.dollar}.ajax({
+		  async: true,
+		  type: "POST",
+		  cache: false,
+		  url: "temp",
+		  data: {
+			  temp: $("#settemp").val()
+		  }
+		}).done(function ( data ) {
+			if( "OK" != data )
+				alert(data);
+		});
+}
+
+function addTime() {
+	${esc.dollar}.ajax({
+		  async: true,
+		  type: "POST",
+		  cache: false,
+		  url: "addtime",
+		  data: {
+			  time: $("#addtime").val()
+		  }
+		}).done(function ( data ) {
+			if( "OK" != data )
+				alert(data);
+		});
+}
+
 </script>
 
 #parse("footer.vm")

@@ -1,21 +1,17 @@
 package se.trollbrook.bryggmester;
 
-import se.trollbrook.bryggmester.Relay.RelayState;
 
 /**
  * @author jorgen.smas@entercash.com
  */
 public enum PumpState {
 
-	ON(RelayState.ON), OFF(RelayState.OFF);
+	ON,
 
-	private RelayState relayState;
+	OFF,
 
-	PumpState(RelayState r) {
-		relayState = r;
-	}
+	HOT,
 
-	public RelayState toRelayState() {
-		return relayState;
-	}
+	PAUSED;
+
 }

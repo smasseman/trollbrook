@@ -1,6 +1,5 @@
 package se.trollbrook.springboot;
 
-import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.tools.generic.DateTool;
 import org.apache.velocity.tools.generic.EscapeTool;
 import org.springframework.boot.SpringApplication;
@@ -34,13 +33,13 @@ public class Application extends WebMvcConfigurerAdapter {
 	public static void main(String[] args) {
 		ApplicationContext ctx = SpringApplication.run(Application.class, args);
 		ctx.toString();
-
+		/*
 		String[] beanNames = ctx.getBeanDefinitionNames();
 		java.util.Arrays.sort(beanNames);
 		for (String beanName : beanNames) {
 			System.out.println(beanName);
 		}
 		System.out.println(ctx.getBean(VelocityEngine.class).getTemplate("index.vm").getEncoding());
+		*/
 	}
-
 }

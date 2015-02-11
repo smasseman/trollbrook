@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import se.trollbrook.bryggmester.Temperature;
 import se.trollbrook.bryggmester.TemperatureSensorMock;
-import se.trollbrook.bryggmester.execution.WaitForTemperature;
 
 /**
  * @author jorgen.smas@entercash.com

@@ -41,9 +41,8 @@ public class Relay {
 			throw new IllegalArgumentException("Can not set state to null.");
 		if (!ObjectUtil.equals(currentState, state)) {
 			changeState(state);
-			logger.debug(name + " change from {} to {}", currentState, state);
+			logger.trace(name + " change from {} to {} and will notify {}", currentState, state, lm.getListeners());
 			currentState = state;
-			logger.debug("Notify " + lm.getListeners() + " with " + state);
 			lm.notifyListeners(state);
 		}
 	}
@@ -60,5 +59,13 @@ public class Relay {
 		builder.append(currentState);
 		builder.append("]");
 		return builder.toString();
+	}
+
+	public void on() {
+		setState(RelayState.ON);
+	}
+
+	public void off() {
+		setState(RelayState.OFF);
 	}
 }

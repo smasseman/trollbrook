@@ -1,7 +1,5 @@
 package se.trollbrook.springboot;
 
-import java.io.File;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -16,12 +14,6 @@ import se.trollbrook.bryggmester.Relay;
 @Configuration
 @Profile("default")
 public class DefaultConfiguration implements BrewerConfig {
-
-	@Override
-	@Bean
-	public String ctxRoot() {
-		return "";
-	}
 
 	@Override
 	@Bean
@@ -43,26 +35,8 @@ public class DefaultConfiguration implements BrewerConfig {
 
 	@Override
 	@Bean
-	public Relay pumprelay() {
+	public Relay pumppin() {
 		return new Relay("Pump");
-	}
-
-	@Override
-	@Bean
-	public File temperatureFile() {
-		return new File("data/temp.txt").getAbsoluteFile();
-	}
-
-	@Override
-	@Bean
-	public File databasedirectory() {
-		return new File("data/recipes").getAbsoluteFile();
-	}
-
-	@Override
-	@Bean
-	public File historydirectory() {
-		return new File("data/history").getAbsoluteFile();
 	}
 
 	@Bean

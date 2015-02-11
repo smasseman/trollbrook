@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import se.trollbrook.bryggmester.SystemTime;
 import se.trollbrook.bryggmester.alarm.Alarm;
 import se.trollbrook.bryggmester.alarm.Alarm.Type;
 import se.trollbrook.bryggmester.alarm.Alarms;
@@ -39,12 +40,12 @@ public class AlertAction implements Action {
 	@Override
 	public void execute() {
 		started = true;
-		doneTime = new Date(System.currentTimeMillis() + waitTime.toMillis());
+		doneTime = new Date(SystemTime.currentTimeMillis() + waitTime.toMillis());
 		long timeToWait;
 		while ((timeToWait = calculateTimeToWait()) > 0) {
 			try {
 				LoggerFactory.getLogger(getClass()).debug("Wait " + Time.format(timeToWait) + " before " + message);
-				Thread.sleep(Math.min(timeToWait, TimeUnit.SECONDS.toMillis(30)));
+				SystemTime.sleep(Math.min(timeToWait, TimeUnit.SECONDS.toMillis(30)));
 			} catch (InterruptedException e) {
 				return;
 			}
@@ -58,7 +59,7 @@ public class AlertAction implements Action {
 	}
 
 	private long calculateTimeToWait() {
-		return doneTime.getTime() - System.currentTimeMillis();
+		return doneTime.getTime() - SystemTime.currentTimeMillis();
 	}
 
 	@Override

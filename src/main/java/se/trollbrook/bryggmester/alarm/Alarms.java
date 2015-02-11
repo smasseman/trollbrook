@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import se.trollbrook.bryggmester.SystemTime;
 import se.trollbrook.util.event.Listener;
 import se.trollbrook.util.event.ListenerManager;
 
@@ -23,7 +24,7 @@ public class Alarms {
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	private Map<Long, ActiveAlarm> activeAlarms = new LinkedHashMap<>();
-	private Long alarmId = System.currentTimeMillis();
+	private Long alarmId = SystemTime.currentTimeMillis();
 	private ListenerManager<ActiveAlarm> lm = new ListenerManager<>();
 	@Resource
 	private SoundPlayer player;
@@ -82,8 +83,8 @@ public class Alarms {
 				this.wait(TimeUnit.SECONDS.toMillis(30));
 			}
 		} else {
-			long maxTime = timeout + System.currentTimeMillis();
-			while (System.currentTimeMillis() < maxTime && activeAlarms.containsKey(alarm.getId()))
+			long maxTime = timeout + SystemTime.currentTimeMillis();
+			while (SystemTime.currentTimeMillis() < maxTime && activeAlarms.containsKey(alarm.getId()))
 				this.wait(1000);
 		}
 		return activeAlarms.containsKey(alarm.getId());

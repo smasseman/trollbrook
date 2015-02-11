@@ -17,9 +17,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import se.trollbrook.bryggmester.Pump;
+import se.trollbrook.bryggmester.PumpState;
 import se.trollbrook.bryggmester.Relay;
 import se.trollbrook.bryggmester.Relay.RelayListener;
 import se.trollbrook.bryggmester.Relay.RelayState;
+import se.trollbrook.bryggmester.SystemTime;
 import se.trollbrook.bryggmester.Temperature;
 import se.trollbrook.bryggmester.TemperatureController;
 import se.trollbrook.bryggmester.TemperatureController.WantedTemperatureListener;
@@ -33,6 +36,7 @@ import se.trollbrook.bryggmester.execution.Executor;
 import se.trollbrook.bryggmester.execution.Executor.ExecutionListener;
 import se.trollbrook.bryggmester.execution.TimeLeft;
 import se.trollbrook.util.Time;
+import se.trollbrook.util.event.Listener;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -51,8 +55,8 @@ public class StatusController {
 	private JsonObject json = new JsonObject();
 	@Resource
 	private TemperatureSensor tempSensor;
-	@Resource(name = "pumprelay")
-	private Relay pump;
+	@Resource
+	private Pump pump;
 	@Resource(name = "heatrelay")
 	private Relay heat;
 	@Resource
@@ -62,12 +66,12 @@ public class StatusController {
 	@Resource
 	private Executor executor;
 	private Object lock = new Object();
-	private long timestamp = System.currentTimeMillis();
+	private long timestamp = SystemTime.currentTimeMillis();
 	private Gson gson;
 	private boolean initedJson;
 
 	public StatusController() {
-		logger.debug("Created.");
+		logger.trace("Created.");
 	}
 
 	@PostConstruct
@@ -82,7 +86,7 @@ public class StatusController {
 		addAlarmListener();
 		addHeatListener();
 		addExecutorListener();
-		logger.debug("Inited.");
+		logger.trace("Inited.");
 	}
 
 	private void addExecutorListener() {
@@ -123,16 +127,15 @@ public class StatusController {
 	}
 
 	private void addPumpListener() {
-		pump.addListener(new RelayListener() {
-
+		pump.addListener(new Listener<PumpState>() {
+			
 			@Override
-			public void eventNotification(RelayState event) {
+			public void eventNotification(PumpState event) {
 				synchronized (lock) {
 					setPumpState(event);
 					updateTimestamp();
 				}
 			}
-
 		});
 	}
 
@@ -148,7 +151,7 @@ public class StatusController {
 		});
 	}
 
-	private void setPumpState(RelayState event) {
+	private void setPumpState(PumpState event) {
 		json.addProperty("pump", event.name());
 	}
 
@@ -192,7 +195,7 @@ public class StatusController {
 	}
 
 	protected void updateTimestamp() {
-		timestamp = System.currentTimeMillis();
+		timestamp = SystemTime.currentTimeMillis();
 		json.addProperty("ts", timestamp);
 		lock.notifyAll();
 	}
@@ -204,10 +207,10 @@ public class StatusController {
 				model.addAttribute("activealarm", alarm);
 				return;
 			} else {
-				logger.debug("No match for " + id + " and " + alarm);
+				logger.trace("No match for " + id + " and " + alarm);
 			}
 		}
-		logger.debug("Could not find any active alarm with id " + id);
+		logger.trace("Could not find any active alarm with id " + id);
 	}
 
 	@RequestMapping("/status.json")
@@ -217,23 +220,23 @@ public class StatusController {
 		if (clientTsStr == null)
 			clientTsStr = "0";
 		Long clientTs = new Long(clientTsStr);
-		long start = System.currentTimeMillis();
+		long start = SystemTime.currentTimeMillis();
 		synchronized (lock) {
 			if (!initedJson)
 				initJson();
-			long maxTime = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(20);
-			while (timestamp <= clientTs && System.currentTimeMillis() < maxTime) {
-				logger.debug("My timestamp: " + format(timestamp));
-				logger.debug("Client time : " + format(clientTs));
+			long maxTime = SystemTime.currentTimeMillis() + TimeUnit.SECONDS.toMillis(20);
+			while (timestamp <= clientTs && SystemTime.currentTimeMillis() < maxTime) {
+				logger.trace("My timestamp: " + format(timestamp));
+				logger.trace("Client time : " + format(clientTs));
 
-				long diff = maxTime - System.currentTimeMillis();
+				long diff = maxTime - SystemTime.currentTimeMillis();
 				if (diff > 0) {
-					logger.debug("Sleep for " + Time.fromMillis(diff));
+					logger.trace("Sleep for " + Time.fromMillis(diff));
 					lock.wait(diff);
 				}
 			}
-			long stop = System.currentTimeMillis();
-			logger.debug("Done waiting after " + Time.fromMillis(stop - start));
+			long stop = SystemTime.currentTimeMillis();
+			logger.trace("Done waiting after " + Time.fromMillis(stop - start));
 			Thread.sleep(300);// Updates often comes in klasar.
 			writeStatus(response);
 		}
@@ -254,7 +257,7 @@ public class StatusController {
 
 	private void writeStatus(HttpServletResponse resp) throws IOException {
 		JsonObject j = gson.fromJson(this.json.toString(), JsonElement.class).getAsJsonObject();
-		j.addProperty("ts", System.currentTimeMillis());
+		j.addProperty("ts", SystemTime.currentTimeMillis());
 		JsonArray timeLeftStartArray = new JsonArray();
 		JsonArray timeLeftEndArray = new JsonArray();
 		Time totalTime = Time.ZERO;
@@ -278,7 +281,7 @@ public class StatusController {
 		writeCpuTemp(j);
 		String jsonString = gson.toJson(j);
 		JsonWriter.writeJson(resp, jsonString);
-		logger.debug("Written:\n" + jsonString);
+		logger.trace("Written:\n" + jsonString);
 	}
 
 	private void addTimeLeft(JsonArray jsonArray, Time time) {
@@ -301,7 +304,7 @@ public class StatusController {
 				s = s.substring("temp=".length());
 			j.addProperty("cputemp", s);
 		} catch (Exception e) {
-			logger.debug("Failed to mesure cpu temp: " + e);
+			logger.trace("Failed to mesure cpu temp: " + e);
 		}
 	}
 

@@ -11,17 +11,19 @@ import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 /**
  * @author jorgen.smas@entercash.com
  */
 @Service
+@Profile("rpi")
 public class TemperatureSensorImpl extends AbstractTemperatureSensor {
 
-	@Resource(name = "temperatureFile")
+	@Value("${temperatureFile}")
 	private File file;
 	private Thread thread;
 	private long updateInterval = 3;

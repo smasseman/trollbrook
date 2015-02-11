@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import se.trollbrook.bryggmester.Rast;
+import se.trollbrook.bryggmester.SystemTime;
 import se.trollbrook.bryggmester.Temperature;
 import se.trollbrook.bryggmester.TimeLeftCalculator;
 import se.trollbrook.util.Time;
@@ -43,18 +44,18 @@ public class RastAction implements Action {
 			try {
 				WaitForTemperature.waitFor(env.getTemperatureSensor(), rast.getTemperature());
 			} catch (InterruptedException e) {
-				env.getPumpController().off();
-				env.getTemperatureController().setWantedTemperature(Temperature.OFF);
+				//env.getPumpController().off();
+				//env.getTemperatureController().setWantedTemperature(Temperature.OFF);
 				return;
 			}
 
-			this.doneTime = new Date(System.currentTimeMillis() + rast.getDuration().toMillis());
+			this.doneTime = new Date(SystemTime.currentTimeMillis() + rast.getDuration().toMillis());
 			try {
 				sleepUntilDoneTime();
 			} catch (InterruptedException e) {
 				return;
 			} finally {
-				env.getPumpController().off();
+				//env.getPumpController().off();
 			}
 		} finally {
 			running = false;
@@ -64,14 +65,14 @@ public class RastAction implements Action {
 	private void sleepUntilDoneTime() throws InterruptedException {
 		long oneMinute = TimeUnit.SECONDS.toMillis(60);
 		long t;
-		while ((t = doneTime.getTime() - System.currentTimeMillis()) > 0) {
+		while ((t = doneTime.getTime() - SystemTime.currentTimeMillis()) > 0) {
 			logger.debug("This rast should last for " + this.rast.getDuration() + " so we will sleep here "
 					+ Time.fromMillis(t).removeMillisSeconds() + " until "
 					+ new SimpleDateFormat("HH:mm").format(doneTime));
 			if (t < oneMinute)
-				Thread.sleep(t);
+				SystemTime.sleep(t);
 			else
-				Thread.sleep(oneMinute);
+				SystemTime.sleep(oneMinute);
 		}
 	}
 
@@ -92,7 +93,7 @@ public class RastAction implements Action {
 		if (doneTime == null) {
 			t = t.add(rast.getDuration());
 		} else {
-			t = t.add(Time.fromMillis(doneTime.getTime() - System.currentTimeMillis()));
+			t = t.add(Time.fromMillis(doneTime.getTime() - SystemTime.currentTimeMillis()));
 		}
 		return t;
 	}
