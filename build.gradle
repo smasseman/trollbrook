@@ -29,13 +29,10 @@ dependencies {
 	compile("org.springframework:spring-web")
 	compile("org.springframework:spring-webmvc")
 	compile("com.google.code.gson:gson:2.+")
-	compile('com.pi4j:pi4j-core:0.+') {
-		exclude module: 'pi4j-native'
-	}
+	compile("com.pi4j:pi4j-core:0.+") 
 
     testCompile("junit:junit")
     testCompile("org.mockito:mockito-all:1.9.5")
-
 }
 
 springBoot {
