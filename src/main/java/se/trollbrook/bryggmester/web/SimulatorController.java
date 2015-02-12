@@ -2,6 +2,7 @@ package se.trollbrook.bryggmester.web;
 
 import java.math.BigDecimal;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.slf4j.Logger;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import se.trollbrook.bryggmester.SystemTime;
 import se.trollbrook.bryggmester.Temperature;
+import se.trollbrook.bryggmester.TemperatureSensor;
 import se.trollbrook.bryggmester.TemperatureSensorMock;
 import se.trollbrook.util.Time;
 
@@ -21,8 +23,16 @@ public class SimulatorController {
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	@Resource
+	TemperatureSensor tempSensorReal;
 	TemperatureSensorMock tempSensor;
 
+	@PostConstruct
+	public void init() {
+		if( tempSensorReal instanceof TemperatureSensorMock ) {
+			tempSensor = (TemperatureSensorMock) tempSensorReal;
+		}
+	}
+	
 	@RequestMapping(value = "/addtime", method = RequestMethod.POST)
 	public String addTime(@RequestParam String time) {
 		try {

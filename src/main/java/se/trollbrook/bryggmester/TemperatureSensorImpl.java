@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
  * @author jorgen.smas@entercash.com
  */
 @Service
-@Profile("rpi")
+@Profile("pi")
 public class TemperatureSensorImpl extends AbstractTemperatureSensor {
 
 	@Value("${temperatureFile}")
